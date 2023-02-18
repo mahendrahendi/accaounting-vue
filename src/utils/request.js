@@ -67,7 +67,7 @@ service.interceptors.response.use(
       })
     } else if (error.response.status == 400) {
       Message({
-        message: error.response.data.err_details,
+        message: error.response.data.err_message,
         type: 'error',
         duration: 3 * 1000
       })

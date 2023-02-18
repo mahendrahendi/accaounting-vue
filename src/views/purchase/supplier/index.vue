@@ -147,7 +147,6 @@ import moment from 'moment'
 import Pagination from '@/components/Pagination'
 import { validNumeric, validPassword, validUsername, validAlphabets } from '@/utils/validate'
 import { MessageBox } from 'element-ui'
-import { getEnforcerList, postEnforcer, putEnforcer, putEnforcerPassword, deleteEnforcer } from '@/api/enforcer-account'
 import { getSupplierList } from '@/api/supplier'
 import { getRoleList } from '@/api/role-management'
 import CryptoJS from 'crypto-js'
@@ -281,7 +280,7 @@ export default {
       listQuery: {
         page: 1,
         pagesize: 10,
-        order: '',
+        order: 'supplier_id desc',
         start: 1,
         name: '',
         email: '',

@@ -14,7 +14,7 @@
                   <h1 class="page-title">Create Tagihan</h1>
               </div>
             </div>
-            <el-form ref="supplierListForm" :model="supplierListForm" :rules="supplierListRules">
+            <el-form ref="supplierListForm" :model="billingListForm" :rules="supplierListRules">
               <div class="summary-container">
                 <div class="row">
                   <h4 class="summary-form summary-title">Billing</h4>
@@ -98,6 +98,14 @@
                 <el-row style="margin-top: 25px; padding-bottom: 50px">
                   <el-button style="width: 100%" @click="addMoreItem">Add more item..</el-button>
                 </el-row>
+                <!-- <el-row>
+                  <el-col :span="18">
+                    <el-form-item label="Catatan" class="filter-form-item input-small" style="text-align: right;" prop="bill_start_date"></el-form-item>
+                  </el-col>
+                  <el-col :span="6">
+                    <el-form-item label="Catatan" class="filter-form-item input-small" prop="bill_start_date"></el-form-item>
+                  </el-col>
+                </el-row> -->
                 <el-row>
                   <el-col :span="24">
                     <el-form-item label="Catatan" class="filter-form-item input-small" prop="bill_start_date">
@@ -108,7 +116,7 @@
               </div>
               <el-row style="text-align: right; margin-top: 25px; padding-bottom: 50px">
                 <el-button @click="$router.go(-1)" type="info" round>Cancel</el-button>
-                <el-button style="margin-right: 25px" type="success" round @click="createSupplier">Submit</el-button>
+                <el-button style="margin-right: 25px" type="success" round>Submit</el-button>
               </el-row>
             </el-form>
         </el-col>
@@ -253,7 +261,7 @@
         // query var
         listQuery: {
           page: 1,
-          pagesize: 10,
+          pagesize: 1000,
           order: '',
           start: 1,
           name: '',
@@ -327,27 +335,7 @@
         }).catch(() => {
         })
       },
-  
-      // button action
-      createSupplier() {
-        this.$refs.supplierListForm.validate((valid) => {
-          if (valid) {
-            const tempData = Object.assign({}, this.supplierListForm)
-            
-            postSupplier(tempData).then((response) => {
-              this.$notify({
-                title: 'Success',
-                message: 'Successfully create supplier',
-                type: 'success',
-                duration: 2000
-              })
-              // this.cancelForm()
-            }).catch((err) => {
-              console.log("err", err);
-            })
-          }
-        })
-      },
+
   
       updateUser() {
         this.$refs.enforcerListForm.validate((valid) => {
