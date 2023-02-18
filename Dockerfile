@@ -14,7 +14,7 @@ RUN npm install
 
 RUN npm run build:prod
 
-EXPOSE 9526
+EXPOSE 8686
 #CMD [ "http-server", "dist" ]
 #CMD ["npm", "run", "serve"]
 CMD npm run preview
