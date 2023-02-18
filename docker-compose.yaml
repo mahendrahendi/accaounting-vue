@@ -5,14 +5,14 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-    container_name: enforcer-web-admin
+    container_name: anara-web-admin
     network_mode: bridge
     build: .
     volumes:
       - /app/
       - /app/node_modules
     labels:
-      - unotoken-web-admin
+      - anara-web-admin
     stdin_open: true
     tty: true
     ports:
