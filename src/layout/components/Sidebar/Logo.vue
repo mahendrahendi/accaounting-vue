@@ -2,11 +2,11 @@
   <div class="sidebar-logo-container" :class="{'collapse':collapse}">
     <transition name="sidebarLogoFade">
       <router-link v-if="collapse" key="collapse" class="sidebar-logo-link" to="/">
-        <img src="../../../assets/logo/anara-small.png" class="sidebar-logo-collapse">
+        <img src="@/assets/logo/anara-small.png" class="sidebar-logo-collapse">
       </router-link>
       <router-link v-else key="expand" class="sidebar-logo-link" to="/">
-        <!-- <img src="../../../assets/logo/unotoken-icon-dark.png " class="sidebar-logo"> -->
-        <img src="../../../assets/logo/logo_anaragroup_biru.png" class="sidebar-logo">
+        <!-- <img src="@/assets/logo/unotoken-icon-dark.png " class="sidebar-logo"> -->
+        <img src="@/assets/logo/logo.png" class="sidebar-logo">
       </router-link>
     </transition>
   </div>
@@ -48,7 +48,7 @@ export default {
     width: 100%;
 
     & .sidebar-logo {
-      width: 110px;
+      width: 145px;
       vertical-align: middle;
       margin: 25px 0;
 

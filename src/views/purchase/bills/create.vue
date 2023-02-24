@@ -11,7 +11,7 @@
                   icon="el-icon-arrow-left"
                   @click="$router.go(-1)"
                   />
-                  <h1 class="page-title">Create Tagihan</h1>
+                  <h1 class="page-title">Create Pembelian</h1>
               </div>
             </div>
             <el-form ref="supplierListForm" :model="billingListForm" :rules="supplierListRules">
@@ -19,7 +19,7 @@
                 <div class="row">
                   <h4 class="summary-form summary-title">Billing</h4>
                   <p class="subtitle">
-                    Detail penagihan muncul di tagihan Anda. Tanggal Tagihan digunakan di dasbor dan laporan. Pilih tanggal yang Anda harapkan untuk membayar sebagai Tanggal Jatuh Tempo.
+                    Detail penagihan muncul di pembelian Anda. Tanggal pembelian digunakan di dasbor dan laporan. Pilih tanggal yang Anda harapkan untuk membayar sebagai Tanggal Jatuh Tempo.
                   </p>
                   <hr>
                 </div>
@@ -27,14 +27,14 @@
               <div class="data-container">
                 <el-row>
                   <el-col :span="10">
-                    <el-form-item label="Pemasok" class="filter-form-item input-small" prop="supplier_name">
-                      <el-select v-model="supplierListSelected" placeholder="List Pemasok" filterable clearable value-key="supplier_id">
+                    <el-form-item label="Supplier" class="filter-form-item input-small" prop="supplier_name">
+                      <el-select v-model="supplierListSelected" placeholder="List Supplier" filterable clearable value-key="supplier_id">
                         <el-option v-for="item, index in supplierList" :key="index" :label="item.supplier_name"
                           :value="item" />
                       </el-select>
                     </el-form-item>
                     <div class="row" style="margin-left: 20px;" v-if="supplierListSelected !== null">
-                      <p class="subtitle">Tagihan dari:</p>
+                      <p class="subtitle">Pembelian dari:</p>
                       <p class="subtitle"><b>{{ supplierListSelected.supplier_name }}</b></p>
                       <p class="subtitle">{{ supplierListSelected.supplier_address }}</p>
                       <p class="subtitle">NPWP: {{ supplierListSelected.supplier_npwp }}</p>
@@ -44,25 +44,32 @@
                   <el-col :span="14">
                     <el-row>
                       <el-col :span="12">
-                        <el-form-item label="Tanggal Tagihan" class="filter-form-item input-small" prop="bill_start_date">
-                          <el-input v-model="billingListForm.bill_start_date" ref="bill_start_date" placeholder="Masukkan Nama" clearable @change="handleFilter" />
+                        <el-form-item label="Tanggal Pembelian" class="filter-form-item input-small">
+                          <el-date-picker v-model="billingListForm.bill_start_date" :picker-options="dateBetween" value-format="yyyy-MM-dd" placeholder="YYYY-MM-DD" type="date" clearable />
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
-                        <el-form-item label="Nomor Tagihan" class="filter-form-item input-small" prop="bill_number">
-                          <el-input v-model="billingListForm.bill_number" ref="bill_number" placeholder="Masukkan Nama" clearable @change="handleFilter" />
+                        <el-form-item label="Nomor Pembelian" class="filter-form-item input-small" prop="bill_number">
+                          <el-input v-model="billingListForm.bill_number" ref="bill_number" placeholder="Masukkan Nomor Pembelian" clearable @change="handleFilter" />
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">
-                        <el-form-item label="Tanggal Jatuh Tempo" class="filter-form-item input-small" prop="bill_due_date">
-                          <el-input v-model="billingListForm.bill_due_date" ref="bill_due_date" placeholder="Masukkan Nama" clearable @change="handleFilter" />
+                        <el-form-item label="Tanggal Jatuh Tempo" class="filter-form-item input-small">
+                          <el-date-picker v-model="billingListForm.bill_due_date" :picker-options="dateBetween" value-format="yyyy-MM-dd" placeholder="YYYY-MM-DD" type="date" clearable />
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
-                        <el-form-item label="Nomor Pesanan" class="filter-form-item input-small" prop="bill_order_number">
-                          <el-input v-model="billingListForm.bill_order_number" ref="bill_order_number" placeholder="Masukkan Nama" clearable @change="handleFilter" />
+                        <el-form-item label="Nomor Pembelian" class="filter-form-item input-small" prop="bill_order_number">
+                          <el-input v-model="billingListForm.bill_order_number" ref="bill_order_number" placeholder="Masukkan No Pembelian" clearable @change="handleFilter" />
+                        </el-form-item>
+                      </el-col>
+                    </el-row>
+                    <el-row>
+                      <el-col :span="12">
+                        <el-form-item label="Ongkos Kirim" class="filter-form-item input-small" prop="bill_shipping_cost">
+                          <el-input v-model="billingListForm.bill_shipping_cost" ref="bill_shipping_cost" placeholder="Masukkan Ongkos Kirim" clearable @change="handleFilter" />
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -295,7 +302,8 @@
           bill_due_date: "",
           bill_order_number: "",
           bill_items: [],
-          bill_notes: ""
+          bill_notes: "",
+          bill_shipping_cost: ""
         },
 
         selectedSupplier: [],

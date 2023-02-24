@@ -158,7 +158,7 @@ export const asyncRoutes = [
     redirect: '/purchase',
     meta: {
       icon: 'form',
-      title: 'Pembelian',
+      title: 'Procurement',
       roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR']
     },
     children: [
@@ -167,7 +167,7 @@ export const asyncRoutes = [
         component: () => import('@/views/purchase/bills'),
         name: 'BillList',
         props: true,
-        meta: { title: 'Tagihan', icon: 'form', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] }
+        meta: { title: 'Pembelian', icon: 'form', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] }
       },
       {
         path: 'bills/create',
@@ -175,14 +175,14 @@ export const asyncRoutes = [
         name: 'CreateBill',
         props: true,
         hidden: true,
-        meta: { title: 'Create Tagihan', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/bills/list' },
+        meta: { title: 'Create Pembelian', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/bills/list' },
       },
       {
         path: 'supplier/list',
         component: () => import('@/views/purchase/supplier'),
         name: 'SupplierList',
         props: true,
-        meta: { title: 'Pemasok', affix: true, icon: 'form', roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR']},
+        meta: { title: 'Supplier', affix: true, icon: 'form', roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR']},
       },
       {
         path: 'supplier/create',
@@ -190,7 +190,31 @@ export const asyncRoutes = [
         name: 'CreateSupplier',
         props: true,
         hidden: true,
-        meta: { title: 'Create Pemasok', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/supplier/list' },
+        meta: { title: 'Create Supplier', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/supplier/list' },
+      }
+    ]
+  },
+  {
+    path: '/item',
+    component: Layout,
+    redirect: '/item',
+    meta: {
+      roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR']
+    },
+    children: [
+      {
+        path: 'list',
+        component: () => import('@/views/items/index'),
+        name: 'ItemList',
+        meta: { title: 'Items', icon: 'form', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] }
+      },
+      {
+        path: 'create',
+        component: () => import('@/views/items/create'),
+        name: 'ItemCreate',
+        props: true,
+        hidden: true,
+        meta: { title: 'Create Item', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] },
       }
     ]
   },

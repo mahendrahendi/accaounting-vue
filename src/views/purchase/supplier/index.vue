@@ -3,11 +3,11 @@
     <!-- HEADER -->
     <div class="title-container">
       <el-col :span="12">
-        <h1 class="page-title">Pemasok</h1>
+        <h1 class="page-title">Supplier</h1>
       </el-col>
       <el-col :span="12" style="text-align: right;">
-        <el-tooltip content="Create Pemasok" placement="top">
-          <el-button type="success" round icon="el-icon-plus" @click="$router.push('/purchase/supplier/create')">Pemasok Baru</el-button>
+        <el-tooltip content="Create Supplier" placement="top">
+          <el-button type="success" round icon="el-icon-plus" @click="$router.push('/purchase/supplier/create')">Supplier Baru</el-button>
         </el-tooltip>
       </el-col>
     </div>

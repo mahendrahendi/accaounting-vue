@@ -3,11 +3,11 @@
     <!-- HEADER -->
     <div class="title-container">
       <el-col :span="12">
-        <h1 class="page-title">Pembelian</h1>
+        <h1 class="page-title">Items</h1>
       </el-col>
       <el-col :span="12" style="text-align: right;">
-        <el-tooltip content="Create Pemasok" placement="top">
-          <el-button type="success" round icon="el-icon-plus" @click="$router.push('/purchase/bills/create')">Pembelian Baru</el-button>
+        <el-tooltip content="Create Supplier" placement="top">
+          <el-button type="success" round icon="el-icon-plus" @click="$router.push('/item/create')">Item Baru</el-button>
         </el-tooltip>
       </el-col>
     </div>
@@ -27,13 +27,20 @@
       <el-form class="filter-form" style="margin-bottom: 10px">
         <el-col :span="5">
           <el-form-item class="filter-form-item input-small">
-            <el-select v-model="listQuery.status" placeholder="Type" clearable @change="handleFilter">
-              <el-option v-for="item, index in statusList" :key="index" :label="item"
-                :value="item" />
-            </el-select>
+            <el-input v-model="listQuery.name" placeholder="Nama" clearable @change="handleFilter" />
           </el-form-item>
         </el-col>
         <el-col :span="5">
+          <el-form-item class="filter-form-item input-small">
+            <el-input v-model="listQuery.email" placeholder="Email" clearable @change="handleFilter" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="5">
+          <el-form-item class="filter-form-item input-small">
+            <el-input v-model="listQuery.address" placeholder="Alamat" clearable @change="handleFilter" />
+          </el-form-item>
+        </el-col>
+        <el-col :span="4">
           <el-form-item class="filter-form-item input-small">
             <el-select v-model="listQuery.supplierType" placeholder="Type" clearable @change="handleFilter">
               <el-option v-for="item, index in supplierType" :key="index" :label="item"
@@ -48,17 +55,39 @@
     <el-dialog title="Filter" :visible.sync="dialogFilter" class="dialog-small">
       <el-form>
         <el-form-item>
-          <el-select v-model="listQuery.status" placeholder="Type" clearable @change="handleFilter">
+          <el-input v-model="listQuery.nrp" placeholder="NRP" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="listQuery.email" placeholder="Email" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="listQuery.username" placeholder="Username" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-input v-model="listQuery.phoneNumber" placeholder="Phone Number" clearable />
+        </el-form-item>
+        <el-form-item>
+          <el-select v-model="listQuery.status" placeholder="Status" clearable @change="handleFilter">
             <el-option v-for="item, index in statusList" :key="index" :label="item"
               :value="item" />
           </el-select>
         </el-form-item>
         <el-form-item>
-            <el-select v-model="listQuery.supplierType" placeholder="Type" clearable @change="handleFilter">
-              <el-option v-for="item, index in supplierType" :key="index" :label="item"
-                :value="item" />
-            </el-select>
-          </el-form-item>
+          <el-date-picker v-model="listQuery.createdFrom" :picker-options="dateBetween" value-format="yyyy-MM-dd"
+            type="date" clearable placeholder="Created From" />
+        </el-form-item>
+        <el-form-item>
+          <el-date-picker v-model="listQuery.createdTo" :picker-options="dateBetween" value-format="yyyy-MM-dd"
+            type="date" clearable placeholder="Created To" />
+        </el-form-item>
+        <el-form-item>
+          <el-date-picker v-model="listQuery.lastUpdatedFrom" :picker-options="dateBetween" value-format="yyyy-MM-dd"
+            type="date" clearable placeholder="Updated From" />
+        </el-form-item>
+        <el-form-item>
+          <el-date-picker v-model="listQuery.lastUpdatedTo" :picker-options="dateBetween" value-format="yyyy-MM-dd"
+            type="date" clearable placeholder="Updated To" />
+        </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="button-custom small primary" @click="handleFilter">Search</el-button>
@@ -67,10 +96,9 @@
 
     <!-- TABLE -->
     <el-table :key="tableKey" v-loading="listLoading" :data="dataList" fit @sort-change="sortChange">
-      <el-table-column label="Tanggal Jatuh Tempo | Tanggal Pembelian" prop="efc_nrp">
+      <el-table-column label="Nama" prop="efc_nrp">
         <template slot-scope="{row}">
-          <span><b>{{ row.bill_due_date }}</b></span><br>
-          <span>{{ row.bill_start_date }}</span>
+          <span>{{ row.supplier_name }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="Nama Jabatan" prop="name" sortable="custom">
@@ -78,20 +106,19 @@
           <span>{{ row.adm_usr_first_name }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="Status" prop="efc_email">
+      <el-table-column label="Deskrpisi" prop="efc_email">
         <template slot-scope="{row}">
-          <span>{{ row.bill_status }}</span>
+          <span>{{ row.supplier_email }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Pemasok | Nomor" prop="efc_username">
+      <el-table-column label="Harga Beli" prop="efc_username">
         <template slot-scope="{row}">
-          <span><b>{{ row.supplier_name }}</b></span><br>
-          <span>{{ row.bill_number }}</span>
+          <span>{{ row.supplier_address }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Jumlah" prop="efc_phone_number">
+      <el-table-column label="Harga Jual" prop="efc_phone_number">
         <template slot-scope="{row}">
-          <span>{{ row.bill_discount }}</span>
+          <span>{{ row.supplier_npwp }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Action" align="center" width="150px">
@@ -99,10 +126,6 @@
           <el-tooltip content="Edit" placement="top">
             <el-button class="table-icon-button primary" @click="handleEdit(row)"><i
                 class="el-icon-edit" /></el-button>
-          </el-tooltip>
-          <el-tooltip content="Change Password" placement="top">
-            <el-button class="table-icon-button warning" @click="handleChangePassword(row.enforcer_id)"><i
-                class="el-icon-view" /></el-button>
           </el-tooltip>
           <el-tooltip content="Delete" placement="top">
             <el-button class="table-icon-button danger"
@@ -124,8 +147,7 @@ import moment from 'moment'
 import Pagination from '@/components/Pagination'
 import { validNumeric, validPassword, validUsername, validAlphabets } from '@/utils/validate'
 import { MessageBox } from 'element-ui'
-import { getEnforcerList, postEnforcer, putEnforcer, putEnforcerPassword, deleteEnforcer } from '@/api/enforcer-account'
-import { getBillList } from '@/api/bill'
+import { getSupplierList } from '@/api/supplier'
 import { getRoleList } from '@/api/role-management'
 import CryptoJS from 'crypto-js'
 
@@ -258,12 +280,11 @@ export default {
       listQuery: {
         page: 1,
         pagesize: 10,
-        order: '',
+        order: 'supplier_id desc',
         start: 1,
         name: '',
         email: '',
         address: '',
-        status: '',
         supplierType : 'vendor',
       },
 
@@ -280,7 +301,7 @@ export default {
 
       // dropdown var
       roleList: ['Role 1', 'Role 2'],
-      statusList: ['RECIEVED', 'DRAFT'],
+      statusList: ['ACTIVE', 'INACTIVE'],
       supplierType: ['vendor', 'customer'],
       satpasList: ['SATPAS 1', 'SATPAS 2', 'SATPAS 3', 'SATPAS 4', 'SATPAS 5'],
 
@@ -366,7 +387,7 @@ export default {
         this.listQuery.start = this.listQuery.pagesize * (this.listQuery.page-1) + 1
       }
 
-      getBillList(this.listQuery).then(response => {
+      getSupplierList(this.listQuery).then(response => {
         this.dataList = response.data.data
         this.total = response.data.total_records
         this.listLoading = false

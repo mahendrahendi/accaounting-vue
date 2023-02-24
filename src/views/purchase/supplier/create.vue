@@ -11,7 +11,7 @@
                   icon="el-icon-arrow-left"
                   @click="$router.go(-1)"
                   />
-                  <h1 class="page-title">Create Pemasok</h1>
+                  <h1 class="page-title">Create Supplier</h1>
               </div>
             </div>
             <el-form ref="supplierListForm" :model="supplierListForm" :rules="supplierListRules">
@@ -19,7 +19,7 @@
                 <div class="row">
                   <h4 class="summary-form summary-title">Umum</h4>
                   <p class="subtitle">
-                    Informasi kontak penyedia Anda akan muncul di tagihan dan profil mereka. Anda dapat menambahkan informasi kontak dan logo mereka untuk digunakan dalam tagihan.
+                    Informasi kontak penyedia Anda akan muncul di pembelian dan profil mereka. Anda dapat menambahkan informasi kontak dan logo mereka untuk digunakan dalam pembelian.
                   </p>
                   <hr>
                 </div>
@@ -40,11 +40,11 @@
                     <el-form-item label="Telepon" class="filter-form-item input-small" prop="supplier_telephone">
                       <el-input v-model="supplierListForm.supplier_telephone" ref="supplier_telephone" placeholder="Masukkan Telepon" clearable @change="handleFilter" />
                     </el-form-item>
-                    <el-form-item label="Situs Web" class="filter-form-item input-small" prop="supplier_web">
-                      <el-input v-model="supplierListForm.supplier_web" ref="supplier_web" placeholder="Masukkan Situs Web" clearable @change="handleFilter" />
+                    <el-form-item label="Whatsapp" class="filter-form-item input-small" prop="supplier_whatsapp">
+                      <el-input v-model="supplierListForm.supplier_whatsapp" ref="supplier_whatsapp" placeholder="Masukkan No Whatsapp" clearable @change="handleFilter" />
                     </el-form-item>
-                    <el-form-item label="Referensi" class="filter-form-item input-small" prop="supplier_referensi">
-                      <el-input v-model="supplierListForm.supplier_referensi" placeholder="Masukkan Referensi" ref="supplier_referensi" clearable />
+                    <el-form-item label="Deskripsi" class="filter-form-item input-small" prop="supplier_description">
+                      <el-input v-model="supplierListForm.supplier_description" placeholder="Masukkan Deskripsi" ref="supplier_description" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="8">
@@ -56,7 +56,7 @@
                 <div class="row">
                   <h4 class="summary-form summary-title">Billing</h4>
                   <p class="subtitle">
-                    Nomor pajak muncul di setiap tagihan yang diterbitkan untuk Anda. Mata uang yang dipilih menjadi mata uang bawaan untuk penyedia ini.
+                    Nomor pajak muncul di setiap pembelian yang diterbitkan untuk Anda. Mata uang yang dipilih menjadi mata uang bawaan untuk penyedia ini.
                   </p>
                   <hr>
                 </div>
@@ -82,7 +82,7 @@
                 <div class="row">
                   <h4 class="summary-form summary-title">Alamat</h4>
                   <p class="subtitle">
-                    Alamat diperlukan untuk tagihan, jadi Anda perlu menambahkan detail alamat penagihan untuk penyedia Anda.
+                    Alamat diperlukan untuk pembelian, jadi Anda perlu menambahkan detail alamat penagihan untuk penyedia Anda.
                   </p>
                   <hr>
                 </div>
@@ -131,13 +131,13 @@
                 </el-row>
               </div>
               <el-row style="text-align: right; margin-top: 25px; padding-bottom: 50px">
-                <el-button @click="dialogAddLicense = false" type="info" round>Cancel</el-button>
+                <el-button @click="$router.go(-1)" type="info" round>Cancel</el-button>
                 <el-button style="margin-right: 25px" type="success" round @click="createSupplier">Submit</el-button>
               </el-row>
             </el-form>
         </el-col>
         <el-col :span="6">
-            <img src="./../../../assets/payroll.png" alt="" style="position: absolute">
+            <img src="@/assets/payroll.png" alt="" style="position: absolute">
             <div class="row" style="text-align: right;">
                 <h4 class="filter-title">Umum</h4>
                 <h6>Create multiple pay calendars,<br>run payrolls, print payslips,<br> add benefits and deductions,<br>and make bulk payments.</h6>
@@ -300,8 +300,8 @@
           supplier_npwp: "1233456",
           supplier_telephone: "091283213",
           supplier_type: "vendor",
-          supplier_web: "www.gg.com",
-          supplier_referensi: "",
+          supplier_whatsapp: "918923891231",
+          supplier_description: "",
           supplier_status: "",
           supplier_currency: "",
           supplier_founder_address: "",

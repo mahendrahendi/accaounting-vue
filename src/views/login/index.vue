@@ -3,7 +3,7 @@
     <div class="brand-container">
       <div class="title-container">
         <div class="logo-container">
-          <img src="../../assets/logo/logo_anaragroup_biru.png" style="width: 50%;" alt="">
+          <img src="@/assets/logo/logo-square.png" style="width: 50%;" alt="">
           <div class="subtitle">Login to start your session</div>
         </div>
       </div>
