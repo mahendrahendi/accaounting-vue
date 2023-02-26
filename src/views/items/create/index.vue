@@ -14,7 +14,7 @@
                   <h1 class="page-title">Tambah Barang</h1>
               </div>
             </div>
-            <el-form ref="supplierListForm" :model="supplierListForm" :rules="supplierListRules">
+            <el-form ref="inputForm" :model="inputForm" :rules="itemListRules">
               <div class="summary-container">
                 <div class="row">
                   <h4 class="summary-form summary-title">Umum</h4>
@@ -36,22 +36,22 @@
                   </el-col>
                   <el-col :span="12">
                     <el-form-item label="Detail Supplier:" v-if="isSupplierListSelected" class="filter-form-item input-small"><br>
-                      <div class="row">
-                        <p class="subtitle"><b>{{ supplierListSelected.supplier_name }}</b></p>
-                        <p class="subtitle">{{ supplierListSelected.supplier_address ? supplierListSelected.supplier_address : "-" }}</p>
-                        <p class="subtitle">{{ supplierListSelected.supplier_email ? supplierListSelected.supplier_email : "-" }}</p>
-                        <p class="subtitle">NPWP: {{ supplierListSelected.supplier_npwp ? supplierListSelected.supplier_npwp : "-" }}</p>
+                      <div class="row detail-container">
+                        <p class="title"><b>{{ supplierListSelected.supplier_name }}</b></p>
+                        <p>{{ supplierListSelected.supplier_address ? supplierListSelected.supplier_address : "-" }}</p>
+                        <p>{{ supplierListSelected.supplier_email ? supplierListSelected.supplier_email : "-" }}</p>
+                        <p>NPWP: {{ supplierListSelected.supplier_npwp ? supplierListSelected.supplier_npwp : "-" }}</p>
                       </div>
                     </el-form-item>
                   </el-col>
                 </el-row>
                 <el-row v-if="isSupplierListSelected">
-                  <form-item :value="inputValue"/>
+                  <form-item @input="handleInput"/>
                 </el-row>
               </div>
               <el-row style="text-align: right; margin-top: 25px; padding-bottom: 50px">
                 <el-button @click="$router.go(-1)" type="info" round>Cancel</el-button>
-                <el-button style="margin-right: 25px" type="success" round @click="createSupplier">Submit</el-button>
+                <el-button style="margin-right: 25px" type="success" round @click="createItem">Submit</el-button>
               </el-row>
             </el-form>
         </el-col>
@@ -71,23 +71,15 @@
   import FormItem from './components/FormItem.vue'
   import { validNumeric, validPassword, validUsername, validAlphabets } from '@/utils/validate'
   import { MessageBox } from 'element-ui'
-  import { getEnforcerList, postEnforcer, putEnforcer, putEnforcerPassword, deleteEnforcer } from '@/api/enforcer-account'
-  import { getRoleList } from '@/api/role-management'
   import { getSupplierList } from '@/api/supplier'
-  import { postSupplier } from '@/api/supplier'
+  import { postItem } from '@/api/item'
   import CryptoJS from 'crypto-js'
   
   export default {
     components: { FormItem },
     data() {
       return {
-
-        inputValue: '',
-  
-        // table var
-        tableKey: 0,
-        listLoading: true,
-        total: 0,
+        
         dataList: [],
         editList: [],
         supplierListSelected: "",
@@ -96,47 +88,28 @@
         listQuery: {
           page: 1,
           pagesize: 1000,
-          order: '',
-          start: 1,
-          name: '',
-          email: '',
-          address: '',
           supplierType : 'vendor',
         },
   
-        // dropdown var
-        roleList: ['Role 1', 'Role 2'],
-        statusList: ['ACTIVE', 'INACTIVE'],
-        currency: ['USD', 'IDR'],
-        country: ['Indonesia', 'Singapore'],
-  
-        // form var
-        supplierListForm: {
-          isEdit: false,
-          supplier_address: "scbd",
-          supplier_email: "hendi@gmail.com",
-          supplier_name: "Hendi",
-          supplier_npwp: "1233456",
-          supplier_telephone: "091283213",
-          supplier_type: "vendor",
-          supplier_whatsapp: "918923891231",
-          supplier_description: "",
-          supplier_status: "",
-          supplier_currency: "",
-          supplier_founder_address: "",
-          supplier_city: "",
-          supplier_zip_code: "",
-          supplier_province: "",
-          supplier_country: ""
-        },
         selectedSupplier: [],
 
         supplierList: [],
   
-        supplierListRules: {
-          supplier_name: [
-            { required: true, trigger: 'blur', message: 'Please enter the name' }
+        itemListRules: {
+          supplier_id: [
+            { required: true, trigger: 'blur', message: 'Please choose supplier' }
           ],
+          item_name: [
+            { required: true, trigger: 'blur', message: 'Please enter nama barang' }
+          ],
+        },
+
+        inputForm: {
+          supplier_id: "",
+          item_name: "",
+          item_description: "",
+          item_purchase: "",
+          item_sale_price: ""
         }
       }
     },
@@ -144,21 +117,22 @@
       this.getSupplierList()
     },
     watch: {
-      // whenever question changes, this function will run
+      // whenever supplierListSelected question changes, this function will run
       supplierListSelected() {
         if (this.supplierListSelected != "") {
           this.isSupplierListSelected = true
+          this.inputForm.supplier_id = this.supplierListSelected.supplier_id
         } else {
           this.isSupplierListSelected = false
         }
       }
     },
     methods: {
-      // DISABLE DATE
-      disabledOtherDate(time) {
-        var maxDate = moment()._d
-        var isAfterMaxDate = time.getTime() > maxDate
-        return isAfterMaxDate
+      handleInput(data) {
+        this.inputForm.item_name = data.item_name;
+        this.inputForm.item_description = data.item_description;
+        this.inputForm.item_purchase = data.item_purchase;
+        this.inputForm.item_sale_price = data.item_sale_price;
       },
 
       getSupplierList() {
@@ -170,21 +144,27 @@
       },
   
       // button action
-      createSupplier() {
-        this.$refs.supplierListForm.validate((valid) => {
+      createItem() {
+        // return console.log('inputForm: ', Object.assign({}, this.inputForm));
+        this.$refs.inputForm.validate((valid) => {
           if (valid) {
-            const tempData = Object.assign({}, this.supplierListForm)
+            const tempData = Object.assign({}, this.inputForm)
             
-            postSupplier(tempData).then((response) => {
+            postItem(tempData).then((response) => {
               this.$notify({
                 title: 'Success',
-                message: 'Successfully create supplier',
+                message: 'Berhasil tambah barang..',
                 type: 'success',
                 duration: 2000
               })
-              // this.cancelForm()
+              this.$router.push('/item/list')
             }).catch((err) => {
-              console.log("err", err);
+              this.$notify({
+                title: 'Error',
+                message: 'Gagal tambah barang..',
+                type: 'error',
+                duration: 2000
+              })
             })
           }
         })

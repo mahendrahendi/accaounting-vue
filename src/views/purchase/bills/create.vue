@@ -33,43 +33,44 @@
                           :value="item" />
                       </el-select>
                     </el-form-item>
-                    <div class="row" style="margin-left: 20px;" v-if="supplierListSelected !== null">
-                      <p class="subtitle">Pembelian dari:</p>
-                      <p class="subtitle"><b>{{ supplierListSelected.supplier_name }}</b></p>
-                      <p class="subtitle">{{ supplierListSelected.supplier_address }}</p>
-                      <p class="subtitle">NPWP: {{ supplierListSelected.supplier_npwp }}</p>
-                      <p class="subtitle">{{ supplierListSelected.supplier_email }}</p>
-                    </div>
+                    <el-form-item label="Pembelian dari:" v-if="isSupplierListSelected" class="filter-form-item input-small"><br>
+                      <div class="row detail-container" style="margin-left: 20px;">
+                        <p class="title"><b>{{ supplierListSelected.supplier_name }}</b></p>
+                        <p>{{ supplierListSelected.supplier_address }}</p>
+                        <p>NPWP: {{ supplierListSelected.supplier_npwp ? supplierListSelected.supplier_npwp : "-" }}</p>
+                        <p>{{ supplierListSelected.supplier_email }}</p>
+                      </div>
+                    </el-form-item>
                   </el-col>
                   <el-col :span="14">
                     <el-row>
                       <el-col :span="12">
                         <el-form-item label="Tanggal Pembelian" class="filter-form-item input-small">
-                          <el-date-picker v-model="billingListForm.bill_start_date" :picker-options="dateBetween" value-format="yyyy-MM-dd" placeholder="YYYY-MM-DD" type="date" clearable />
+                          <el-date-picker v-model="billingListForm.bill_start_date" value-format="yyyy-MM-dd" placeholder="YYYY-MM-DD" type="date" clearable />
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
                         <el-form-item label="Nomor Pembelian" class="filter-form-item input-small" prop="bill_number">
-                          <el-input v-model="billingListForm.bill_number" ref="bill_number" placeholder="Masukkan Nomor Pembelian" clearable @change="handleFilter" />
+                          <el-input v-model="billingListForm.bill_number" ref="bill_number" placeholder="Masukkan Nomor Pembelian" clearable />
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">
                         <el-form-item label="Tanggal Jatuh Tempo" class="filter-form-item input-small">
-                          <el-date-picker v-model="billingListForm.bill_due_date" :picker-options="dateBetween" value-format="yyyy-MM-dd" placeholder="YYYY-MM-DD" type="date" clearable />
+                          <el-date-picker v-model="billingListForm.bill_due_date" value-format="yyyy-MM-dd" placeholder="YYYY-MM-DD" type="date" clearable />
                         </el-form-item>
                       </el-col>
                       <el-col :span="12">
                         <el-form-item label="Nomor Pembelian" class="filter-form-item input-small" prop="bill_order_number">
-                          <el-input v-model="billingListForm.bill_order_number" ref="bill_order_number" placeholder="Masukkan No Pembelian" clearable @change="handleFilter" />
+                          <el-input v-model="billingListForm.bill_order_number" ref="bill_order_number" placeholder="Masukkan No Pembelian" clearable />
                         </el-form-item>
                       </el-col>
                     </el-row>
                     <el-row>
                       <el-col :span="12">
                         <el-form-item label="Ongkos Kirim" class="filter-form-item input-small" prop="bill_shipping_cost">
-                          <el-input v-model="billingListForm.bill_shipping_cost" ref="bill_shipping_cost" placeholder="Masukkan Ongkos Kirim" clearable @change="handleFilter" />
+                          <el-input v-model="billingListForm.bill_shipping_cost" ref="bill_shipping_cost" placeholder="Masukkan Ongkos Kirim" clearable />
                         </el-form-item>
                       </el-col>
                     </el-row>
@@ -77,44 +78,62 @@
                 </el-row>
                 <el-row style="margin-top: 30px; font-size: 14px;">
                   <el-col :span="4">
-                    <span>Item</span>
+                    <span>Barang</span>
                   </el-col>
-                  <el-col :span="8">
+                  <el-col :span="7">
                     <span>Deskripsi</span>
                   </el-col>
                   <el-col :span="3">
                     <span>Kuantitas</span>
                   </el-col>
                   <el-col :span="3">
-                    <span>Harga</span>
+                    <span>Harga Beli</span>
                   </el-col>
-                  <el-col :span="6">
+                  <el-col :span="3">
+                    <span>Harga Jual</span>
+                  </el-col>
+                  <el-col :span="2" style="text-align: right;">
                     <span>Jumlah</span>
                   </el-col>
                 </el-row>
                 <hr>
                 <el-row v-for="(item, index) in formItemList" :key="index">
+                  <!-- <el-col :span="24">
+                    <el-form-item class="filter-form-item input-small">
+                      <el-select v-model="supplierListSelected" placeholder="List Item" filterable clearable value-key="supplier_id">
+                        <el-option v-for="item, index in itemList" :key="index" :label="item.item_name"
+                          :value="item" />
+                      </el-select>
+                    </el-form-item>
+                  </el-col> -->
                   <form-item 
                     :item_name="item.item_name"
                     :item_description="item.item_description"
                     :item_quantity="item.item_quantity"
                     :item_price="item.item_price"
                     :item_total="item.item_total"
+                    :item_key="index"
+                    @remove-item="removeItem"
+                    @input="handleInput"
                   />
                 </el-row>
                 <el-row style="margin-top: 25px; padding-bottom: 50px">
-                  <el-button style="width: 100%" @click="addMoreItem">Add more item..</el-button>
+                  <el-button style="width: 100%" @click="addMoreItem">Add more..</el-button>
                 </el-row>
-                <!-- <el-row>
+                <el-row style="text-align: right;">
                   <el-col :span="18">
-                    <el-form-item label="Catatan" class="filter-form-item input-small" style="text-align: right;" prop="bill_start_date"></el-form-item>
+                    <p>Subtotal</p>
+                    <p>Ongkos Kirim</p>
+                    <p>Total</p>
                   </el-col>
                   <el-col :span="6">
-                    <el-form-item label="Catatan" class="filter-form-item input-small" prop="bill_start_date"></el-form-item>
+                    <p>{{ billingListForm.bill_subtotal }}</p>
+                    <p>14.000</p>
+                    <p>10.000.000</p>
                   </el-col>
-                </el-row> -->
+                </el-row>
                 <el-row>
-                  <el-col :span="24">
+                  <el-col :span="16">
                     <el-form-item label="Catatan" class="filter-form-item input-small" prop="bill_start_date">
                       <el-input v-model="billingListForm.bill_notes" ref="bill_start_date" type="textarea" :rows="3" placeholder="Masukkan Catatan" clearable />
                     </el-form-item>
@@ -161,107 +180,6 @@
       }
     },
     data() {
-      const validateAlphabets = (rule, value, callback) => {
-        if (!validAlphabets(value)) {
-          callback(new Error('Only allow alphabets'))
-        } else {
-          callback()
-        }
-      }
-      const validateEmail = (rule, value, callback) => {
-        if (!validUsername(value)) {
-          callback(new Error('Please enter the correct email'))
-        } else {
-          callback()
-        }
-      }
-      const validateNumber = (rule, value, callback) => {
-        if (!validNumeric(value)) {
-          callback(new Error('Mobile number must be numeric'))
-        } else {
-          callback()
-        }
-      }
-      const isSame = (rule, value, callback) => {
-        if (value != this.enforcerListForm.enforcer_password) {
-          callback(
-            new Error(
-              'Confirm password does not match! Make sure your password correct'
-            )
-          )
-        } else {
-          callback()
-        }
-      }
-      const isSameChangePassword = (rule, value, callback) => {
-        if (value != this.changePasswordForm.enforcer_updated_password) {
-          callback(
-            new Error(
-              'Confirm password does not match! Make sure your password correct'
-            )
-          )
-        } else {
-          callback()
-        }
-      }
-      const validatePassword = (rule, value, callback) => {
-        const result = validPassword(value)
-        if (result == 'complex') {
-          callback(
-            new Error(
-              'Password must be at least 8 characters contains uppercase, lowercase, number, special character (@$!%*?&)'
-            )
-          )
-        } else if (result == 'sequence') {
-          callback(
-            new Error(
-              'Password can not contain sequence and predictable word (abc, 123, password, etc)'
-            )
-          )
-        } else if (result == 'repeat') {
-          callback(
-            new Error('Password can not contain repeated alphabet or number')
-          )
-        } else {
-          if (
-            this.enforcerListForm.adm_usr_first_name &&
-            this.enforcerListForm.adm_usr_last_name &&
-            this.enforcerListForm.adm_usr_email &&
-            this.enforcerListForm.adm_usr_mobile
-          ) {
-            var regexFirstName = new RegExp(
-              '^((?!' + this.enforcerListForm.adm_usr_first_name + ').)*$',
-              'i'
-            )
-            var regexLastName = new RegExp(
-              '^((?!' + this.enforcerListForm.adm_usr_last_name + ').)*$',
-              'i'
-            )
-            var regexEmail = new RegExp(
-              '^((?!' + this.enforcerListForm.adm_usr_email + ').)*$',
-              'i'
-            )
-            var regexMobile = new RegExp(
-              '^((?!' + this.enforcerListForm.adm_usr_mobile + ').)*$',
-              'i'
-            )
-            if (
-              !regexFirstName.test(value) ||
-              !regexLastName.test(value) ||
-              !regexEmail.test(value) ||
-              !regexMobile.test(value)
-            ) {
-              callback(
-                new Error('Password can not contain personal information')
-              )
-            } else {
-              callback()
-            }
-          } else {
-            callback()
-          }
-        }
-      }
   
       return {
 
@@ -276,6 +194,8 @@
           address: '',
           supplierType : 'vendor',
         },
+
+        isSupplierListSelected: false,
   
         // table var
         tableKey: 0,
@@ -286,12 +206,11 @@
   
         // dropdown var
         roleList: ['Role 1', 'Role 2'],
-        statusList: ['ACTIVE', 'INACTIVE'],
         currency: ['USD', 'IDR'],
         supplierListSelected: null,
         supplierList: [],
+        itemList: [],
         formItemList: [],
-        country: ['Indonesia', 'Singapore'],
   
         // form var
         billingListForm: {
@@ -303,7 +222,9 @@
           bill_order_number: "",
           bill_items: [],
           bill_notes: "",
-          bill_shipping_cost: ""
+          bill_subtotal: 0,
+          bill_total: 0,
+          bill_shipping_cost: 0
         },
 
         selectedSupplier: [],
@@ -315,8 +236,21 @@
         }
       }
     },
+    watch: {
+      // whenever supplierListSelected question changes, this function will run
+      supplierListSelected() {
+        if (this.supplierListSelected != "") {
+          this.isSupplierListSelected = true
+          // this.inputForm.supplier_id = this.supplierListSelected.supplier_id
+        } else {
+          this.isSupplierListSelected = false
+        }
+      },
+
+    },
     created() {
       this.getSupplierList()
+      this.getItemList()
     },
     methods: {
       // DISABLE DATE
@@ -344,104 +278,48 @@
         })
       },
 
-  
-      updateUser() {
-        this.$refs.enforcerListForm.validate((valid) => {
-          if (valid) {
-            const tempData = Object.assign({}, this.enforcerListForm)
-  
-            putEnforcer(tempData, this.enforcerListForm.enforcer_id).then((response) => {
-              this.$notify({
-                title: 'Success',
-                message: 'Successfully update enforcer',
-                type: 'success',
-                duration: 2000
-              })
-              this.getList()
-              this.dialogAddEnforcer = false
-              // this.cancelForm()
-            }).catch((err) => {
-              this.$notify({
-                title: 'Error',
-                message: 'Failed update user',
-                type: 'error',
-                duration: 2000
-              })
-            })
+      getItemList() {
+        this.supplierList = [
+          {
+            item_name: "Pulpen",
+            item_description: "Mantab dah pokoknya",
+            item_sell_price: 10000,
+            item_purchase_price: 9000
+          },
+          {
+            item_name: "Buku",
+            item_description: "Mantab dah pokoknya",
+            item_sell_price: 2000,
+            item_purchase_price: 1500
           }
-        })
+        ]
       },
-  
-      // BUTTON ACTION
-      handleEdit(row) {
-        this.editList = JSON.parse(JSON.stringify(row))
-        this.enforcerListForm.edit = true
-        this.dialogTitle = 'Edit Enforcer'
-        this.enforcerListForm.enforcer_id = row.enforcer_id
-        this.enforcerListForm.enforcer_email = row.enforcer_email
-        this.enforcerListForm.enforcer_jobtitle = row.enforcer_jobtitle
-        this.enforcerListForm.enforcer_nrp = row.enforcer_nrp
-        this.enforcerListForm.enforcer_phone_number = row.enforcer_phone_number
-        this.enforcerListForm.enforcer_status = row.enforcer_status
-        this.enforcerListForm.enforcer_username = row.enforcer_username
-        this.dialogAddEnforcer = true
-        row.edit = !row.edit
+
+      removeItem(index) {
+        console.log('this.formItemList: ', this.formItemList);
+        this.formItemList.splice(index, 1);
       },
-  
-      handleAdd() {
-        this.enforcerListForm.edit = false
-        this.dialogTitle = 'Add Enforcer'
-        this.enforcerListForm.enforcer_email = ''
-        this.enforcerListForm.enforcer_jobtitle = ''
-        this.enforcerListForm.enforcer_nrp = ''
-        this.enforcerListForm.enforcer_phone_number = ''
-        this.enforcerListForm.enforcer_status = ''
-        this.enforcerListForm.enforcer_username = ''
-        this.enforcerListForm.enforcer_password = ''
-        this.enforcerListForm.confirmPassword = ''
-        this.enforcerListForm.edit = false
-        this.dialogAddEnforcer = true
-      },
-  
-      cancelEdit(row) {
-        row.edit = false
-        // this.getList()
-      },
-  
-      handleDelete(enforcer_id, nrp, username) {
-        MessageBox.confirm(`Are you sure you want to delete enforcer ${nrp} (${username}) ? Your action can not be undone.`, 'Delete Confirmation', {
-          confirmButtonText: 'Yes',
-          cancelButtonText: 'Cancel',
-          type: 'warning'
-        }).then(() => {
-          deleteEnforcer(enforcer_id).then((response) => {
-            this.$notify({
-              title: 'Success',
-              message: 'Successfully delete enforcer',
-              type: 'success',
-              duration: 2000
-            })
-            this.getList()
-          }).catch((err) => {
-            this.$notify({
-              title: 'Error',
-              message: 'Failed update user',
-              type: 'error',
-              duration: 2000
-            })
+
+      handleInput(data) {
+        const billItems = this.billingListForm.bill_items
+        
+        if (billItems.length > 0) {
+          billItems.map((d, i) => {
+            if (data.item_key == d.item_key) {
+              this.billingListForm.bill_subtotal -= parseInt(d.item_total_price)
+              console.log('parseInt(data.item_total_price): ', data.item_total_price);
+              billItems.splice(i, 1)
+            }
           })
-        }).catch(() => { })
-      },
-  
-      cancelForm() {
-        const view = this.$route.path
-        this.$store
-          .dispatch('tagsView/delView', view)
-          .then(({ visitedViews }) => {
-            const view2 = visitedViews.slice(-1)[0]
-            this.$store.dispatch('tagsView/delView', view2)
-            this.$router.go('admin-management/list')
-          })
+          billItems.push(data)
+          this.billingListForm.bill_subtotal += parseInt(data.item_total_price)
+        } else {
+          billItems.push(data)
+          this.billingListForm.bill_subtotal += parseInt(data.item_total_price)
+        }
+
+        console.log('billingListForm: ', this.billingListForm);
+        console.log('billSubtotal: ', this.billingListForm.bill_subtotal);
       },
   
       // SORT & FILTER

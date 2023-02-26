@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Enforcer App Admin',
+  title: 'Indo Dispo Admin',
 
   /**
    * @type {boolean} true | false

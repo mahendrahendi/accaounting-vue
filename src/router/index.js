@@ -206,7 +206,7 @@ export const asyncRoutes = [
         path: 'list',
         component: () => import('@/views/items/index'),
         name: 'ItemList',
-        meta: { title: 'Items', icon: 'form', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] }
+        meta: { title: 'Barang', icon: 'form', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] }
       },
       {
         path: 'create',
@@ -214,7 +214,15 @@ export const asyncRoutes = [
         name: 'ItemCreate',
         props: true,
         hidden: true,
-        meta: { title: 'Create Item', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] },
+        meta: { title: 'Create Item', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'], activeMenu: '/item/list' },
+      },
+      {
+        path: 'edit',
+        component: () => import('@/views/items/create'),
+        name: 'ItemEdit',
+        props: true,
+        hidden: true,
+        meta: { title: 'Edit Item', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] },
       }
     ]
   },

@@ -106,7 +106,7 @@
           <span>{{ row.adm_usr_first_name }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="Deskrpisi" prop="efc_email">
+      <el-table-column label="Deskripsi" prop="efc_email">
         <template slot-scope="{row}">
           <span>{{ row.supplier_email }}</span>
         </template>
