@@ -50,8 +50,8 @@
                 </el-row>
               </div>
               <el-row style="text-align: right; margin-top: 25px; padding-bottom: 50px">
-                <el-button @click="$router.go(-1)" type="info" round>Cancel</el-button>
-                <el-button style="margin-right: 25px" type="success" round @click="createItem">Submit</el-button>
+                <el-button @click="$router.go(-1)" type="info" round>Batal</el-button>
+                <el-button style="margin-right: 25px" type="success" round @click="createItem">Simpan</el-button>
               </el-row>
             </el-form>
         </el-col>

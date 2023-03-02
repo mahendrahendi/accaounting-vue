@@ -1,4 +1,5 @@
 // import parseTime, formatTime and set to filter
+import moment from 'moment'
 export { parseTime, formatTime } from '@/utils'
 
 /**
@@ -65,4 +66,20 @@ export function toThousandFilter(num) {
  */
 export function uppercaseFirst(string) {
   return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
+export function dateFilter(date) {
+  if (moment(date).isValid()) {
+    return moment(date).format('DD MMM YYYY')
+  } else {
+    return '-'
+  }
+}
+
+export function dateTimeFilter(date) {
+  if (moment(date).isValid()) {
+    return moment(date).format('DD MMM YYYY HH:mm')
+  } else {
+    return '-'
+  }
 }

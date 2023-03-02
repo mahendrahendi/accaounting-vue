@@ -6,8 +6,8 @@
         <h1 class="page-title">Pembelian</h1>
       </el-col>
       <el-col :span="12" style="text-align: right;">
-        <el-tooltip content="Create Pemasok" placement="top">
-          <el-button type="success" round icon="el-icon-plus" @click="$router.push('/purchase/bills/create')">Pembelian Baru</el-button>
+        <el-tooltip content="Create Pembelian Baru" placement="top">
+          <el-button type="success" round icon="el-icon-plus" @click="$router.push({path: '/purchase/bills/create', query: { title: 'Create Pembelian' }})">Pembelian Baru</el-button>
         </el-tooltip>
       </el-col>
     </div>
@@ -69,8 +69,8 @@
     <el-table :key="tableKey" v-loading="listLoading" :data="dataList" fit @sort-change="sortChange">
       <el-table-column label="Tanggal Jatuh Tempo | Tanggal Pembelian" prop="efc_nrp">
         <template slot-scope="{row}">
-          <span><b>{{ row.bill_due_date }}</b></span><br>
-          <span>{{ row.bill_start_date }}</span>
+          <span><b>{{ row.bill_due_date | dateFilter }}</b></span><br>
+          <span>{{ row.bill_start_date | dateFilter }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="Nama Jabatan" prop="name" sortable="custom">
@@ -83,7 +83,7 @@
           <span>{{ row.bill_status }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Pemasok | Nomor" prop="efc_username">
+      <el-table-column label="Supplier | Nomor" prop="efc_username">
         <template slot-scope="{row}">
           <span><b>{{ row.supplier_name }}</b></span><br>
           <span>{{ row.bill_number }}</span>
@@ -97,7 +97,7 @@
       <el-table-column label="Action" align="center" width="150px">
         <template slot-scope="{row}">
           <el-tooltip content="Edit" placement="top">
-            <el-button class="table-icon-button primary" @click="handleEdit(row)"><i
+            <el-button class="table-icon-button primary" @click="$router.push({ path: '/purchase/bills/edit', query: { id: row.bill_id, title: 'Edit Pembelian' } })"><i
                 class="el-icon-edit" /></el-button>
           </el-tooltip>
           <el-tooltip content="Change Password" placement="top">
@@ -131,125 +131,7 @@ import CryptoJS from 'crypto-js'
 
 export default {
   components: { Pagination },
-  filters: {
-    dateFilter: function (date) {
-      if (moment(date).isValid()) {
-        return moment(date).format('DD MMM YYYY')
-      } else {
-        return '-'
-      }
-    },
-    dateTimeFilter: function (date) {
-      if (moment(date).isValid()) {
-        return moment(date).format('DD MMM YYYY HH:mm')
-      } else {
-        return '-'
-      }
-    }
-  },
   data() {
-    const validateAlphabets = (rule, value, callback) => {
-      if (!validAlphabets(value)) {
-        callback(new Error('Only allow alphabets'))
-      } else {
-        callback()
-      }
-    }
-    const validateEmail = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct email'))
-      } else {
-        callback()
-      }
-    }
-    const validateNumber = (rule, value, callback) => {
-      if (!validNumeric(value)) {
-        callback(new Error('Mobile number must be numeric'))
-      } else {
-        callback()
-      }
-    }
-    const isSame = (rule, value, callback) => {
-      if (value != this.enforcerListForm.enforcer_password) {
-        callback(
-          new Error(
-            'Confirm password does not match! Make sure your password correct'
-          )
-        )
-      } else {
-        callback()
-      }
-    }
-    const isSameChangePassword = (rule, value, callback) => {
-      if (value != this.changePasswordForm.enforcer_updated_password) {
-        callback(
-          new Error(
-            'Confirm password does not match! Make sure your password correct'
-          )
-        )
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      const result = validPassword(value)
-      if (result == 'complex') {
-        callback(
-          new Error(
-            'Password must be at least 8 characters contains uppercase, lowercase, number, special character (@$!%*?&)'
-          )
-        )
-      } else if (result == 'sequence') {
-        callback(
-          new Error(
-            'Password can not contain sequence and predictable word (abc, 123, password, etc)'
-          )
-        )
-      } else if (result == 'repeat') {
-        callback(
-          new Error('Password can not contain repeated alphabet or number')
-        )
-      } else {
-        if (
-          this.enforcerListForm.adm_usr_first_name &&
-          this.enforcerListForm.adm_usr_last_name &&
-          this.enforcerListForm.adm_usr_email &&
-          this.enforcerListForm.adm_usr_mobile
-        ) {
-          var regexFirstName = new RegExp(
-            '^((?!' + this.enforcerListForm.adm_usr_first_name + ').)*$',
-            'i'
-          )
-          var regexLastName = new RegExp(
-            '^((?!' + this.enforcerListForm.adm_usr_last_name + ').)*$',
-            'i'
-          )
-          var regexEmail = new RegExp(
-            '^((?!' + this.enforcerListForm.adm_usr_email + ').)*$',
-            'i'
-          )
-          var regexMobile = new RegExp(
-            '^((?!' + this.enforcerListForm.adm_usr_mobile + ').)*$',
-            'i'
-          )
-          if (
-            !regexFirstName.test(value) ||
-            !regexLastName.test(value) ||
-            !regexEmail.test(value) ||
-            !regexMobile.test(value)
-          ) {
-            callback(
-              new Error('Password can not contain personal information')
-            )
-          } else {
-            callback()
-          }
-        } else {
-          callback()
-        }
-      }
-    }
-
     return {
       // filter date
       dateBetween: { disabledDate: this.disabledOtherDate },
@@ -272,79 +154,13 @@ export default {
       listLoading: true,
       total: 0,
       dataList: [],
-      editList: [],
-
-      // flag var
-      isShowPassword: false,
-      isShowConfirmPassword: false,
 
       // dropdown var
-      roleList: ['Role 1', 'Role 2'],
       statusList: ['RECIEVED', 'DRAFT'],
       supplierType: ['vendor', 'customer'],
-      satpasList: ['SATPAS 1', 'SATPAS 2', 'SATPAS 3', 'SATPAS 4', 'SATPAS 5'],
 
       // dialog var
       dialogFilter: false,
-      dialogAddEnforcer: false,
-      dialogChangePassword: false,
-      dialogTitle: 'Add Admin',
-
-      // form var
-      enforcerListForm: {
-        edit: false,
-        enforcer_id: undefined,
-        enforcer_email: '',
-        enforcer_jobtitle: '',
-        enforcer_nrp: '',
-        enforcer_phone_number: '',
-        enforcer_status: '',
-        enforcer_satpas: '',
-        enforcer_username: '',
-        enforcer_password: '',
-        confirmPassword: ''
-      },
-
-      changePasswordForm: {
-        enforcer_updated_password: '',
-        confirmPasswordUpdated: '',
-        enforcer_id: ''
-      },
-
-      changePasswordFormRules: {
-        enforcer_updated_password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        confirmPasswordUpdated: [{ required: true, trigger: 'blur', validator: isSameChangePassword }]
-      },
-
-      userListRules: {
-        role_id: [
-          { required: true, trigger: 'blur', message: 'Please choose a role' }
-        ],
-        adm_usr_email: [
-          { required: true, trigger: 'blur', validator: validateEmail }
-        ],
-        adm_usr_nrp: [
-          { required: true, trigger: 'blur', message: 'Please enter the correct nrp' }
-        ],
-        adm_usr_username: [
-          { required: true, trigger: 'blur', message: 'Please enter the username' }
-        ],
-        adm_usr_job_title: [
-          { required: true, trigger: 'blur', message: 'Please enter the correct job title' }
-        ],
-        adm_usr_mobile: [
-          { required: true, trigger: 'blur', validator: validateNumber }
-        ],
-        enforcer_phone_number: [
-          { required: true, trigger: 'blur', validator: validateNumber }
-        ],
-        usr_pwd_hash: [
-          { required: true, trigger: 'blur', validator: validatePassword }
-        ],
-        confirmPassword: [
-          { required: true, trigger: 'blur', validator: isSame }
-        ]
-      }
     }
   },
   created(){
@@ -360,11 +176,6 @@ export default {
 
     getList() {
       this.listLoading = true
-      if (this.listQuery.page == 1) {
-        this.listQuery.start = 1
-      } else {
-        this.listQuery.start = this.listQuery.pagesize * (this.listQuery.page-1) + 1
-      }
 
       getBillList(this.listQuery).then(response => {
         this.dataList = response.data.data
@@ -373,125 +184,6 @@ export default {
       }).catch(() => {
         this.listLoading = false
       })
-    },
-
-    // button action
-    createUser() {
-      this.$refs.enforcerListForm.validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.enforcerListForm)
-          // tempData.enforcer_password = this.encrypt(this.enforcerListForm.usr_pwd_hash)
-
-          postEnforcer(tempData).then((response) => {
-            this.$notify({
-              title: 'Success',
-              message: 'Successfully create enforcer',
-              type: 'success',
-              duration: 2000
-            })
-            this.getList()
-            this.dialogAddEnforcer = false
-            // this.cancelForm()
-          }).catch(() => {})
-        }
-      })
-    },
-
-    updateUser() {
-      this.$refs.enforcerListForm.validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.enforcerListForm)
-
-          putEnforcer(tempData, this.enforcerListForm.enforcer_id).then((response) => {
-            this.$notify({
-              title: 'Success',
-              message: 'Successfully update enforcer',
-              type: 'success',
-              duration: 2000
-            })
-            this.getList()
-            this.dialogAddEnforcer = false
-            // this.cancelForm()
-          }).catch((err) => {
-            this.$notify({
-              title: 'Error',
-              message: 'Failed update user',
-              type: 'error',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-
-    // BUTTON ACTION
-    handleEdit(row) {
-      this.editList = JSON.parse(JSON.stringify(row))
-      this.enforcerListForm.edit = true
-      this.dialogTitle = 'Edit Enforcer'
-      this.enforcerListForm.enforcer_id = row.enforcer_id
-      this.enforcerListForm.enforcer_email = row.enforcer_email
-      this.enforcerListForm.enforcer_jobtitle = row.enforcer_jobtitle
-      this.enforcerListForm.enforcer_nrp = row.enforcer_nrp
-      this.enforcerListForm.enforcer_phone_number = row.enforcer_phone_number
-      this.enforcerListForm.enforcer_status = row.enforcer_status
-      this.enforcerListForm.enforcer_username = row.enforcer_username
-      this.dialogAddEnforcer = true
-      row.edit = !row.edit
-    },
-
-    handleAdd() {
-      this.enforcerListForm.edit = false
-      this.dialogTitle = 'Add Enforcer'
-      this.enforcerListForm.enforcer_email = ''
-      this.enforcerListForm.enforcer_jobtitle = ''
-      this.enforcerListForm.enforcer_nrp = ''
-      this.enforcerListForm.enforcer_phone_number = ''
-      this.enforcerListForm.enforcer_status = ''
-      this.enforcerListForm.enforcer_username = ''
-      this.enforcerListForm.enforcer_password = ''
-      this.enforcerListForm.confirmPassword = ''
-      this.enforcerListForm.edit = false
-      this.dialogAddEnforcer = true
-    },
-
-    handleChangePassword(enforcer_id) {
-      this.changePasswordForm.enforcer_id = enforcer_id
-      this.dialogChangePassword = true
-    },
-
-    handleCancelChangePassword() {
-      this.dialogChangePassword = false
-      this.$refs.changePasswordForm.resetFields()
-    },
-
-    changePassword() {
-      this.$refs.changePasswordForm.validate((valid) => {
-        if (valid) {
-          this.loadingChange = true
-          const tempData = Object.assign({}, this.changePasswordForm)
-          // tempData.enforcer_password = this.encrypt(tempData.enforcer_updated_password)
-          tempData.enforcer_password = tempData.enforcer_updated_password
-          console.log('tempData: ', tempData);
-
-          putEnforcerPassword(tempData, tempData.enforcer_id).then(() => {
-            this.loadingChange = false
-            this.$notify({
-              title: 'Success',
-              message: 'Successfully change password',
-              type: 'success',
-              duration: 2000
-            })
-            this.getList()
-            this.dialogChangePassword = false
-          }).catch(() => {})
-        }
-      })
-    },
-
-    cancelEdit(row) {
-      row.edit = false
-      // this.getList()
     },
 
     handleDelete(enforcer_id, nrp, username) {

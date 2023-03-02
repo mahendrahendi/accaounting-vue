@@ -155,7 +155,7 @@ export const asyncRoutes = [
   {
     path: '/purchase',
     component: Layout,
-    redirect: '/purchase',
+    redirect: 'noRedirect',
     meta: {
       icon: 'form',
       title: 'Procurement',
@@ -176,6 +176,14 @@ export const asyncRoutes = [
         props: true,
         hidden: true,
         meta: { title: 'Create Pembelian', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/bills/list' },
+      },
+      {
+        path: 'bills/edit',
+        component: () => import('@/views/purchase/bills/create'),
+        name: 'EditBill',
+        props: true,
+        hidden: true,
+        meta: { title: 'Edit Pembelian', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/bills/list' },
       },
       {
         path: 'supplier/list',

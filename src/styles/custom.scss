@@ -2,6 +2,8 @@
 @import url('https://fonts.googleapis.com/css?family=Quicksand:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
 
 $--color-primary: #2e3092;
+$--color-success: #32c900;
+$--color-info: #dce2f9;
 $--color-secondary: #668EAB;
 $--color-white: #d6d6f2;
 $--color-dark: #d6d6f2;
@@ -92,6 +94,16 @@ hr {
     // float: left;
   }
 }
+
+.dropzone .dz-message {
+    font-size: 14px;
+    color: #b6b6b6;
+    margin: 0 !important;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+} 
 
 // TITLE
 .title-container {
@@ -614,6 +626,11 @@ input[type="file"] {
   }
 }
 
+.el-input-group__prepend {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 20px;
+}
+
 // MODIFY EL-FORM
 .el-form {
   .el-form-item {
@@ -621,8 +638,24 @@ input[type="file"] {
 
     &.input-small {
       .el-input__inner {
+        height: 35px;
+        border-radius: 20px;
+      }
+    }
+
+    &.input-small-right {
+      .el-input__inner {
         height: 40px;
         border-radius: 20px;
+        text-align: right;
+      }
+    }
+
+    &.input-small-append {
+      .el-input__inner {
+        height: 35px;
+        border-radius: 0 20px 20px 0;
+        margin: 0px;
       }
     }
   }
@@ -1054,6 +1087,49 @@ input[type="file"] {
     }
   }
 
+}
+
+.el-button.el-button--primary {
+  background: $--color-primary;
+  border-color: $--color-primary;
+  color: #fff;
+
+  &:hover {
+    cursor: pointer;
+    background: $--color-primary;
+    border-color: $--color-primary;
+    color: #fff;
+  }
+}
+
+.el-button.el-button--success {
+  background: $--color-success;
+  border-color: $--color-success;
+  color: #fff;
+
+  &:hover {
+    cursor: pointer;
+    background: $--color-success;
+    border-color: $--color-success;
+    color: #fff;
+  }
+}
+
+.el-button.el-button--info {
+  background: $--color-info;
+  border-color: $--color-info;
+  color: #2e3092;
+
+  &:hover {
+    cursor: pointer;
+    background: $--color-info;
+    border-color: $--color-info;
+    color: #2e3092;
+  }
+}
+
+.el-button.el-button--medium {
+  border-radius: 20px;
 }
 
 @media(max-width:1000px) {

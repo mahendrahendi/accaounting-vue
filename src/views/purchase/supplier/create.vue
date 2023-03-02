@@ -157,22 +157,6 @@
   import CryptoJS from 'crypto-js'
   
   export default {
-    filters: {
-      dateFilter: function (date) {
-        if (moment(date).isValid()) {
-          return moment(date).format('DD MMM YYYY')
-        } else {
-          return '-'
-        }
-      },
-      dateTimeFilter: function (date) {
-        if (moment(date).isValid()) {
-          return moment(date).format('DD MMM YYYY HH:mm')
-        } else {
-          return '-'
-        }
-      }
-    },
     data() {
       const validateAlphabets = (rule, value, callback) => {
         if (!validAlphabets(value)) {

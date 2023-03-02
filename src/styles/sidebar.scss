@@ -204,6 +204,13 @@
   }
 }
 
+.el-menu-item {
+  &.is-active {
+    color: $subMenuActiveText !important;
+    font-weight: bold;
+  }
+}
+
 // when menu collapsed
 .el-menu--vertical {
   &>.el-menu {
