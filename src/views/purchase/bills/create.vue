@@ -133,14 +133,14 @@
                 <el-col :span="6">Ongkos Kirim</el-col>
                 <el-col :span="5">{{ billingListForm.bill_shipping_cost }}</el-col>
               </el-row>
-              <el-row type="flex" align="middle" style="text-align: right;" class="row-bg" justify="end">
+              <!-- <el-row type="flex" align="middle" style="text-align: right;" class="row-bg" justify="end">
                 <el-col :span="6">Diskon %</el-col>
                 <el-col :span="5">
                   <el-form-item class="input-small-right" prop="bill_discount">
                     <el-input ref="bill_discount" v-model="billingListForm.bill_discount" placeholder="Masukkan Diskon" />
                   </el-form-item>
                 </el-col>
-              </el-row>
+              </el-row> -->
               <el-row type="flex" style="text-align: right;" class="row-bg" justify="end">
                 <el-col :span="6">Total</el-col>
                 <el-col :span="5">{{ grandTotal }}</el-col>

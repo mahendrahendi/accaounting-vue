@@ -50,12 +50,12 @@
       </el-col>
       <el-col :span="2">
         <el-form-item class="filter-form-item input-small" prop="item_discount">
-          <el-input ref="item_discount" v-model="list.item_discount" placeholder="&" @input="emitInput" />
+          <el-input ref="item_discount" v-model="list.item_discount" placeholder="%" @input="emitInput" />
         </el-form-item>
       </el-col>
       <el-col :span="2">
         <el-form-item class="filter-form-item input-small" prop="item_ppn">
-          <el-select ref="item_ppn" v-model="list.item_ppn" placeholder="%" value-key="item_ppn">
+          <el-select ref="item_ppn" v-model="list.item_ppn" placeholder="%" @input="emitInput" value-key="item_ppn">
             <el-option v-for="item, index in ppnList"
               :key="index"
               :label="item != 0 ? `${item}%` : 'Non-PPN'"
@@ -105,6 +105,14 @@
       item_key: {
         type: String
       },
+      item_discount: {
+        type: Number,
+        default: 0
+      },
+      item_ppn: {
+        type: Number,
+        default: 0
+      },
       isItemSelected: {
         type: Boolean,
         default: false
@@ -120,6 +128,8 @@
           item_name: this.item_name,
           item_description: this.item_description,
           item_qty: this.item_qty,
+          item_discount: this.item_discount,
+          item_ppn: this.item_ppn,
           item_purchase_price: this.item_purchase_price,
           item_total_price: 0,
           item_status: ''
@@ -136,7 +146,12 @@
           this.list.item_description = this.itemListSelectedTemp.item_description
           this.list.item_qty = 1
           this.list.item_purchase_price = this.itemListSelectedTemp.item_purchase_price
-          this.list.item_total_price = parseInt(this.itemListSelectedTemp.item_purchase_price) * 1
+          this.list.item_discount = this.itemListSelectedTemp.item_discount ? this.itemListSelectedTemp.item_discount : 0
+          this.list.item_ppn = this.itemListSelectedTemp.item_ppn ? this.itemListSelectedTemp.item_ppn : 0
+          let count_qty = parseInt(this.itemListSelectedTemp.item_purchase_price) * 1
+          let count_discount = count_qty - (count_qty * (parseInt(this.itemListSelectedTemp.item_discount) / 100))
+          let total = count_discount + (count_discount * (parseInt(this.itemListSelectedTemp.item_ppn) / 100))
+          this.list.item_total_price = total
           this.list.item_status = 'ready'
           this.isDisabled = true
           this.isItemListSelected = true
@@ -147,11 +162,12 @@
       }
     },
     computed: {
-      totalPrice() {
-        console.log('this.item_purchase_price', this.item_purchase_price);
-        let total = this.item_purchase_price * this.item_qty
-        return total
-      },
+      // totalPrice(qty, item_purchase_price, item_discount, item_ppn) {
+      //   let count_qty = parseInt(item_purchase_price) * qty
+      //   let count_discount = count_qty - (count_qty * (parseInt(item_discount) / 100))
+      //   let total = count_discount + (count_discount * (parseInt(item_ppn) / 100))
+      //   return total
+      // },
     },
     created() {
       this.getItemList()
@@ -180,13 +196,21 @@
         this.itemList.splice(index, 1)
       },
       emitInput() {
-        const total = parseInt(this.list.item_qty) * parseInt(this.list.item_purchase_price)
+        let count_qty = parseInt(this.list.item_purchase_price) * this.list.item_qty
+        let count_discount = count_qty - (count_qty * (parseInt(this.list.item_discount) / 100))
+        let count_ppn = count_discount + (count_discount * (parseInt(this.list.item_ppn) / 100))
+        let total = count_ppn
+        console.log('total: ', this.list.item_ppn);
+        // const total = parseInt(this.list.item_qty) * parseInt(this.list.item_purchase_price)
+        // let total = totalPrice(this.list.item_qty, this.list.item_purchase_price, this.list.item_discount, this.list.item_ppn)
         this.list.item_total_price = total || 0
         this.$emit('input', {
           item_key: this.item_key,
           item_name: this.list.item_name,
           item_description: this.list.item_description,
           item_qty: this.list.item_qty,
+          item_discount: this.list.item_discount,
+          item_ppn: this.list.item_ppn,
           item_purchase_price: this.list.item_purchase_price,
           item_total_price: this.list.item_total_price,
           item_status: this.list.item_status
