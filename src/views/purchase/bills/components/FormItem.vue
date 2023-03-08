@@ -28,8 +28,8 @@
         </el-form-item>
       </el-col>
       <el-col :span="2">
-        <el-form-item class="filter-form-item input-small" prop="item_unit_type">
-          <el-select ref="item_unit_type" v-model="list.item_unit_type" value-key="item_unit_type">
+        <el-form-item class="filter-form-item input-small" prop="item_unit">
+          <el-select ref="item_unit" v-model="list.item_unit" value-key="item_unit">
             <el-option v-for="item, index in unitList"
               :key="index"
               :label="item"
@@ -77,6 +77,8 @@
   </template>
   
   <script>
+  import { getItemBySuppId } from '@/api/supplier'
+
   export default {
     name: 'FormItem',
     props: {
@@ -109,6 +111,10 @@
         type: Number,
         default: 0
       },
+      supplier_id: {
+        type: Number,
+        default: 0
+      },
       item_ppn: {
         type: Number,
         default: 0
@@ -132,7 +138,8 @@
           item_ppn: this.item_ppn,
           item_purchase_price: this.item_purchase_price,
           item_total_price: 0,
-          item_status: ''
+          item_status: '',
+          item_unit: ''
         },
         itemListSelectedTemp: '',
         isDisabled: false
@@ -159,7 +166,16 @@
         } else {
           this.isItemListSelected = false
         }
+      },
+      supplier_id() {
+        console.log('this.supplier_id: ', this.supplier_id);
+        if (this.supplier_id != 0) {
+          this.getItemList(this.supplier_id)
+        }
       }
+    },
+    created() {
+      this.getItemList(this.supplier_id)
     },
     computed: {
       // totalPrice(qty, item_purchase_price, item_discount, item_ppn) {
@@ -169,28 +185,20 @@
       //   return total
       // },
     },
-    created() {
-      this.getItemList()
-    },
     methods: {
-      getItemList() {
-        this.itemList = [
-          {
-            item_name: 'Pulpen',
-            item_description: 'Mantab dah pokoknya',
-            item_purchase_price: 9000
-          },
-          {
-            item_name: 'Buku',
-            item_description: 'Mantab dah pokoknya',
-            item_purchase_price: 1500
-          }
-        ]
+      getItemList(id) {
+        getItemBySuppId(id).then(response => {
+          console.log('itemList', this.itemList);
+          console.log('response.data', response.data);
+          this.itemList = response.data
+        }).catch(() => {})
       },
+
       addNewItem() {
         this.isItemListSelected = true
         this.list.item_status = 'new'
       },
+
       removeItem(index) {
         this.$emit('remove-item', index)
         this.itemList.splice(index, 1)
@@ -208,12 +216,13 @@
           item_key: this.item_key,
           item_name: this.list.item_name,
           item_description: this.list.item_description,
-          item_qty: this.list.item_qty,
-          item_discount: this.list.item_discount,
+          item_qty: parseInt(this.list.item_qty),
+          item_discount: parseInt(this.list.item_discount),
           item_ppn: this.list.item_ppn,
-          item_purchase_price: this.list.item_purchase_price,
+          item_purchase_price: parseInt(this.list.item_purchase_price),
           item_total_price: this.list.item_total_price,
-          item_status: this.list.item_status
+          item_status: this.list.item_status,
+          item_unit: this.list.item_unit
         })
       }
     }

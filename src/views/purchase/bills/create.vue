@@ -108,6 +108,7 @@
             <hr>
             <el-row v-for="(item, index) in formItemList" :key="item.id">
               <form-item
+                :supplier_id="item.supplier_id"
                 :item_name="item.item_name"
                 :item_description="item.item_description"
                 :item_qty="item.item_qty"
@@ -182,8 +183,9 @@ import { createUniqueString } from '@/utils'
 import { MessageBox } from 'element-ui'
 import { getEnforcerList, postEnforcer, putEnforcer, putEnforcerPassword, deleteEnforcer } from '@/api/enforcer-account'
 import { getRoleList } from '@/api/role-management'
+import { postItem } from '@/api/item'
 import { postBill, getBillById } from '@/api/bill'
-import { getSupplierList } from '@/api/supplier'
+import { getSupplierList, getItemBySuppId } from '@/api/supplier'
 import CryptoJS from 'crypto-js'
 
 export default {
@@ -224,7 +226,7 @@ export default {
       // form var
       billingListForm: {
         isEdit: false,
-        supplier_id: this.supplierListSelected ? this.supplierListSelected.supplier_id : '',
+        supplier_id: '',
         bill_start_date: '',
         bill_number: '',
         bill_due_date: '',
@@ -248,6 +250,8 @@ export default {
     supplierListSelected() {
       if (this.supplierListSelected != '') {
         this.isSupplierListSelected = true
+        this.billingListForm.supplier_id = this.supplierListSelected.supplier_id
+        this.getItemList(this.supplierListSelected.supplier_id)
         // this.inputForm.supplier_id = this.supplierListSelected.supplier_id
       } else {
         this.isSupplierListSelected = false
@@ -257,7 +261,6 @@ export default {
   computed: {
       itemTotal() {
           let bill_item = this.billingListForm.bill_items
-          console.log("bill_item", bill_item);
           let total = 0
           if (bill_item.length > 0) {
               total = bill_item.reduce((acc, curval) => acc + parseInt(curval.item_total_price), 0);
@@ -276,7 +279,6 @@ export default {
   },
   created() {
     this.getSupplierList()
-    this.getItemList()
     this.getBillById()
   },
   methods: {
@@ -295,14 +297,19 @@ export default {
       return isAfterMaxDate
     },
     addMoreItem() {
-      this.formItemList.push({
-		    id: uuid(),
-        isItemSelected: false,
-        item_name: '',
-        item_description: '',
-        item_qty: 0,
-        item_price: '',
-        item_total: ''
+      this.$refs.billingListForm.validate((valid) => {
+        if (valid) {
+          this.formItemList.push({
+            id: uuid(),
+            isItemSelected: false,
+            item_name: '',
+            item_description: '',
+            item_qty: 0,
+            item_price: '',
+            item_total: '',
+            supplier_id: this.supplierListSelected.supplier_id
+          })
+        }
       })
     },
     getSupplierList() {
@@ -317,7 +324,6 @@ export default {
       if (this.id) {
         getBillById(this.id).then(response => {
           let res = response.data
-          console.log('response.data', response.data);
   
           this.billingListForm.bill_start_date = res.bill_start_date,
           this.billingListForm.bill_number = res.bill_number,
@@ -344,23 +350,27 @@ export default {
       }
     },
 
-    getItemList() {
-      this.supplierList = [
-        {
-          item_id: 1,
-          item_name: 'Pulpen',
-          item_description: 'Mantab dah pokoknya',
-          item_sell_price: 10000,
-          item_purchase_price: 9000
-        },
-        {
-          item_id: 2,
-          item_name: 'Buku',
-          item_description: 'Mantab dah pokoknya',
-          item_sell_price: 2000,
-          item_purchase_price: 1500
-        }
-      ]
+    getItemList(id) {
+      getItemBySuppId(id).then(response => {
+        // console.log('response.data', response.data);
+        this.itemList = response.data
+      }).catch(() => {})
+      // this.supplierList = [
+      //   {
+      //     item_id: 1,
+      //     item_name: 'Pulpen',
+      //     item_description: 'Mantab dah pokoknya',
+      //     item_sell_price: 10000,
+      //     item_purchase_price: 9000
+      //   },
+      //   {
+      //     item_id: 2,
+      //     item_name: 'Buku',
+      //     item_description: 'Mantab dah pokoknya',
+      //     item_sell_price: 2000,
+      //     item_purchase_price: 1500
+      //   }
+      // ]
     },
     removeItem(index) {
 	    this.formItemList.splice(index, 1)
@@ -385,6 +395,29 @@ export default {
       this.$refs.billingListForm.validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.billingListForm)
+          tempData.bill_type = 'vendor'
+
+          // return console.log('tempData', tempData);
+
+          tempData.bill_items.map((d, i) => {
+            if (d.item_status === 'new') {
+              const tempItem = d
+              tempItem.supplier_id = tempData.supplier_id
+              console.log("tempItem: ", tempItem);
+              postItem(tempItem).then((response) => {
+                this.$notify({
+                  title: 'Success',
+                  message: 'Sukses tambah item',
+                  type: 'success',
+                  duration: 2000
+                })
+                // this.cancelForm()
+              }).catch((err) => {
+                console.log("err", err);
+              })
+            }
+          })
+
           
           postBill(tempData).then((response) => {
             this.$notify({

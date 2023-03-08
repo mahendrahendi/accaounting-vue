@@ -1,5 +1,5 @@
 <template>
-  <router-link to="/profile/profile">
+  <router-link to="#">
     <div class="profil">
       <!-- <div v-if="name !== ''" class="profil-avatar" :class="{'collapse':collapse}">{{ name | initialFormat }}</div> -->
       <span class="profil-name" :class="{'collapse':collapse}">{{ name }}</span>

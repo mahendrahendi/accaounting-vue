@@ -199,38 +199,30 @@ export const asyncRoutes = [
         props: true,
         hidden: true,
         meta: { title: 'Create Supplier', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/supplier/list' },
-      }
-    ]
-  },
-  {
-    path: '/item',
-    component: Layout,
-    redirect: '/item',
-    meta: {
-      roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR']
-    },
-    children: [
-      {
-        path: 'list',
-        component: () => import('@/views/items/index'),
-        name: 'ItemList',
-        meta: { title: 'Barang', icon: 'form', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] }
       },
       {
-        path: 'create',
+        path: 'supplier/item/list',
+        component: () => import('@/views/items/index'),
+        name: 'ItemList',
+        props: true,
+        hidden: true,
+        meta: { title: 'Barang', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'], activeMenu: '/purchase/supplier/list' }
+      },
+      {
+        path: 'supplier/item/create',
         component: () => import('@/views/items/create'),
         name: 'ItemCreate',
         props: true,
         hidden: true,
-        meta: { title: 'Create Item', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'], activeMenu: '/item/list' },
+        meta: { title: 'Create Item', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'], activeMenu: '/purchase/supplier/list' },
       },
       {
-        path: 'edit',
+        path: 'supplier/item/edit',
         component: () => import('@/views/items/create'),
         name: 'ItemEdit',
         props: true,
         hidden: true,
-        meta: { title: 'Edit Item', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] },
+        meta: { title: 'Edit Item', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'], activeMenu: '/purchase/supplier/list' },
       }
     ]
   },

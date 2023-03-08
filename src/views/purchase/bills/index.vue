@@ -12,6 +12,21 @@
       </el-col>
     </div>
 
+    <div class="title-container" align="center">
+      <el-col :span="8">
+        <h1 class="page-title">Rp{{ billHeader.bill_overdue | toThousandFilter }}</h1>
+        <h1 class="page-subtitle">Jatuh Tempo</h1>
+      </el-col>
+      <el-col :span="8">
+        <h1 class="page-title">Rp{{ billHeader.bill_open | toThousandFilter }}</h1>
+        <h1 class="page-subtitle">Terbuka</h1>
+      </el-col>
+      <el-col :span="8">
+        <h1 class="page-title">Rp{{ billHeader.bill_draft | toThousandFilter }}</h1>
+        <h1 class="page-subtitle">Konsep</h1>
+      </el-col>
+    </div>
+
     <!-- BUTTON FOR SMALL MEDIA -->
     <div class="page-button-media">
       <el-tooltip content="Filter" placement="top">
@@ -125,7 +140,7 @@ import Pagination from '@/components/Pagination'
 import { validNumeric, validPassword, validUsername, validAlphabets } from '@/utils/validate'
 import { MessageBox } from 'element-ui'
 import { getEnforcerList, postEnforcer, putEnforcer, putEnforcerPassword, deleteEnforcer } from '@/api/enforcer-account'
-import { getBillList } from '@/api/bill'
+import { getBillList, getBillHeader } from '@/api/bill'
 import { getRoleList } from '@/api/role-management'
 import CryptoJS from 'crypto-js'
 
@@ -154,6 +169,7 @@ export default {
       listLoading: true,
       total: 0,
       dataList: [],
+      billHeader: [],
 
       // dropdown var
       statusList: ['RECIEVED', 'DRAFT'],
@@ -165,6 +181,7 @@ export default {
   },
   created(){
     this.getList()
+    this.getHeader()
   },
   methods: {
     // DISABLE DATE
@@ -180,6 +197,17 @@ export default {
       getBillList(this.listQuery).then(response => {
         this.dataList = response.data.data
         this.total = response.data.total_records
+        this.listLoading = false
+      }).catch(() => {
+        this.listLoading = false
+      })
+    },
+
+    getHeader() {
+      this.listLoading = true
+
+      getBillHeader().then(response => {
+        this.billHeader = response.data
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false

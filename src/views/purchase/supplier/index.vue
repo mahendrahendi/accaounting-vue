@@ -121,7 +121,14 @@
           <span>{{ row.supplier_npwp }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Action" align="center" width="150px">
+      <el-table-column label="Barang" align="center" prop="efc_phone_number">
+        <template slot-scope="{row}">
+          <span><el-tooltip content="Edit" placement="top">
+            <el-button type="warning" round @click="$router.push({ path: '/purchase/supplier/item/list', query: { supplier_id: row.supplier_id, supplier_name: row.supplier_name } })">Lihat Barang..</el-button>
+          </el-tooltip></span>
+        </template>
+      </el-table-column>
+      <!-- <el-table-column label="Action" align="center" width="150px">
         <template slot-scope="{row}">
           <el-tooltip content="Edit" placement="top">
             <el-button class="table-icon-button primary" @click="handleEdit(row)"><i
@@ -133,7 +140,7 @@
             </el-button>
           </el-tooltip>
         </template>
-      </el-table-column>
+      </el-table-column> -->
     </el-table>
 
     <!-- Pagination -->
@@ -372,6 +379,9 @@ export default {
     this.getList()
   },
   methods: {
+    navigateToRoot() {
+      this.$router.push({ path: '/purchase/supplier/item/list', props: { id: 2 } });
+    },
     // DISABLE DATE
     disabledOtherDate(time) {
       var maxDate = moment()._d

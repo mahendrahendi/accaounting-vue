@@ -2,9 +2,6 @@ export default {
     supplier_id: [
         { required: true, trigger: 'blur', message: 'Please choose Supplier ID' }
     ],
-    bill_shipping_cost: [
-        { required: true, trigger: 'blur', message: 'Please enter Ongkos kirim' }
-    ],
     bill_start_date: [
         { required: true, trigger: 'blur', message: 'Please enter Tanggal pembelian' }
     ],

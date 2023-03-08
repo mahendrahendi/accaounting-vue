@@ -8,6 +8,13 @@ export function getSupplierList(query) {
   })
 }
 
+export function getItemBySuppId(id) {
+  return request({
+    url: `/supplier/${id}/items`,
+    method: 'get',
+  })
+}
+
 export function postSupplier(data) {
   return request({
     url: '/supplier',

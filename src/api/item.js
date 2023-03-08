@@ -8,6 +8,20 @@ export function getItemList(query) {
   })
 }
 
+export function getItemListBySuppID(id) {
+  return request({
+    url: `/supplier/${id}/items`,
+    method: 'get'
+  })
+}
+
+export function deleteItem(id) {
+  return request({
+    url: `/item/${id}`,
+    method: 'delete'
+  })
+}
+
 export function postItem(data) {
   return request({
     url: '/item',

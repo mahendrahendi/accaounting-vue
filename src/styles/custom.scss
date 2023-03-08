@@ -6,8 +6,9 @@ $--color-success: #32c900;
 $--color-info: #dce2f9;
 $--color-secondary: #668EAB;
 $--color-white: #d6d6f2;
-$--color-dark: #d6d6f2;
+$--color-dark: #0E436B;
 $--color-background: #fcfcfc;
+$--color-background-row: #ffffff;
 $--color-hover: #F2F4FC;
 $--color-transparent: #F2F4FC;
 $--color-title: #0E436B;
@@ -920,7 +921,7 @@ input[type="file"] {
   }
 
   &__row td {
-    background: $--color-background;
+    background: $--color-background-row;
     padding-top: 15px;
     vertical-align: top;
     // border: none !important;

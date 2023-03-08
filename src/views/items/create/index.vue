@@ -11,7 +11,7 @@
                   icon="el-icon-arrow-left"
                   @click="$router.go(-1)"
                   />
-                  <h1 class="page-title">Tambah Barang</h1>
+                  <h1 class="page-title">{{ this.$route.meta.title }}</h1>
               </div>
             </div>
             <el-form ref="inputForm" :model="inputForm" :rules="itemListRules">
@@ -25,7 +25,7 @@
                 </div>
               </div>
               <div class="data-container">
-                <el-row>
+                <!-- <el-row>
                   <el-col :span="12">
                     <el-form-item label="Supplier" class="filter-form-item input-small" prop="supplier_name">
                       <el-select v-model="supplierListSelected" placeholder="List Supplier" filterable clearable value-key="supplier_id">
@@ -44,7 +44,7 @@
                       </div>
                     </el-form-item>
                   </el-col>
-                </el-row>
+                </el-row> -->
                 <el-row v-if="isSupplierListSelected">
                   <form-item @input="handleInput"/>
                 </el-row>
@@ -71,25 +71,23 @@
   import FormItem from './components/FormItem.vue'
   import { validNumeric, validPassword, validUsername, validAlphabets } from '@/utils/validate'
   import { MessageBox } from 'element-ui'
-  import { getSupplierList } from '@/api/supplier'
   import { postItem } from '@/api/item'
   import CryptoJS from 'crypto-js'
   
   export default {
     components: { FormItem },
+    props: {
+      item_data: {
+        type: Object
+      }
+    },
     data() {
       return {
         
         dataList: [],
         editList: [],
         supplierListSelected: "",
-        isSupplierListSelected: false,
-
-        listQuery: {
-          page: 1,
-          pagesize: 1000,
-          supplierType : 'vendor',
-        },
+        isSupplierListSelected: true,
   
         selectedSupplier: [],
 
@@ -105,17 +103,17 @@
         },
 
         inputForm: {
-          supplier_id: "",
+          supplier_id: parseInt(this.$route.query.supplier_id),
           item_name: "",
           item_description: "",
-          item_purchase: "",
-          item_sale_price: ""
+          item_purchase_price: "",
+          item_sale_price: 0,
+          item_unit: "",
+          item_wholesalers: [],
         }
       }
     },
-    created() {
-      this.getSupplierList()
-    },
+    
     watch: {
       // whenever supplierListSelected question changes, this function will run
       supplierListSelected() {
@@ -127,20 +125,25 @@
         }
       }
     },
+
+    created(){
+      this.editData()
+    },
+
     methods: {
       handleInput(data) {
         this.inputForm.item_name = data.item_name;
         this.inputForm.item_description = data.item_description;
-        this.inputForm.item_purchase = data.item_purchase;
-        this.inputForm.item_sale_price = data.item_sale_price;
+        this.inputForm.item_purchase_price = data.item_purchase_price;
+        this.inputForm.item_sell_price = data.item_sell_price;
+        this.inputForm.item_unit = data.item_unit;
+        this.inputForm.item_wholesalers = data.item_wholesalers;
       },
 
-      getSupplierList() {
-        this.listQuery
-        getSupplierList(this.listQuery).then(response => {
-          this.supplierList = response.data.data
-        }).catch(() => {
-        })
+      editData(){
+        const item = this.item_data
+        this.inputForm.item_name = item.item_name
+        console.log('item_data: ', this.item_data);
       },
   
       // button action
@@ -149,6 +152,16 @@
         this.$refs.inputForm.validate((valid) => {
           if (valid) {
             const tempData = Object.assign({}, this.inputForm)
+
+            let map_wholesalers_item = []
+            tempData.item_wholesalers.map((d, i) => {
+              map_wholesalers_item.push({
+                wholesaler_price: parseInt(d.wholesaler_price),
+                wholesaler_qty: parseInt(d.wholesaler_qty)
+              })
+            })
+
+            tempData.item_wholesalers = map_wholesalers_item
             
             postItem(tempData).then((response) => {
               this.$notify({
@@ -157,7 +170,7 @@
                 type: 'success',
                 duration: 2000
               })
-              this.$router.push('/item/list')
+              this.$router.go(-1)
             }).catch((err) => {
               this.$notify({
                 title: 'Error',

@@ -27,7 +27,15 @@
                 </el-col>
             </el-row>
             <el-row type="flex" align="middle" class="row-bg">
-                <el-col :span="4">Harga Satuan</el-col>
+                <el-col :span="4">Harga Jual</el-col>
+                <el-col :span="20">
+                    <el-form-item class="filter-form-item input-small" prop="item_sell_price">
+                        <el-input v-model="item_sell_price" ref="item_sell_price" placeholder="Masukkan harga jual" @input="emitInput" clearable />
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row type="flex" align="middle" class="row-bg">
+                <el-col :span="4">Harga Beli Satuan</el-col>
                 <el-col :span="20">
                     <el-form-item class="filter-form-item input-small" prop="item_unit_price">
                         <el-input v-model="item_unit_price" ref="item_unit_price" placeholder="Masukkan harga satuan" @input="emitInput" clearable />
@@ -44,16 +52,16 @@
                         <el-col :span="12"><b>Jumlah Min.</b></el-col>
                         <el-col :span="12"><b>Harga Grosir</b></el-col>
                     </el-row>
-                    <el-row v-for="(item, index) in wholesalerPrice" :key="item.id" type="flex" align="middle" class="row-bg">
+                    <el-row v-for="(item, index) in wholesalerPrice" :key="index" type="flex" align="middle" class="row-bg">
                         <el-col :span="11">
-                            <el-form-item class="filter-form-item input-small-append" prop="item_purchase">
-                                <el-input v-model="wholesalerPrice[index].min" ref="item_quantity" placeholder="" clearable ><template slot="prepend"><b>≥</b></template></el-input>
+                            <el-form-item class="filter-form-item input-small-append" prop="wholesaler_qty">
+                                <el-input v-model="wholesalerPrice[index].wholesaler_qty" ref="wholesaler_qty" placeholder="" clearable ><template slot="prepend"><b>≥</b></template></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="1">=</el-col>
                         <el-col :span="11">
-                            <el-form-item class="filter-form-item input-small-append" prop="item_purchase">
-                                <el-input v-model="wholesalerPrice[index].price" ref="item_quantity" placeholder="" clearable ><template slot="prepend"><b>Rp</b></template></el-input>
+                            <el-form-item class="filter-form-item input-small-append" prop="wholesaler_price">
+                                <el-input v-model="wholesalerPrice[index].wholesaler_price" ref="wholesaler_price" placeholder="" clearable ><template slot="prepend"><b>Rp</b></template></el-input>
                             </el-form-item>
                         </el-col>
                         <el-col :span="1">
@@ -87,10 +95,9 @@ export default {
 
             item_name: "",
             item_description: "",
-            item_purchase: "",
-            item_sale_price: "",
             item_unit_type: "",
             item_unit_price: "",
+            item_sell_price: "",
 
             wholesalerPrice: []
         }
@@ -109,14 +116,19 @@ export default {
             this.$emit('input', {
                 item_name: this.item_name,
                 item_description: this.item_description,
-                item_purchase: this.item_purchase,
-                item_sale_price: this.item_sale_price,
-                item_unit: this.item_unit
+                item_unit: this.item_unit_type,
+                item_purchase_price: parseInt(this.item_unit_price),
+                item_sell_price: parseInt(this.item_sell_price),
+                item_wholesalers: this.wholesalerPrice
             });
         },
 
         addWholesalerPrice() {
-            this.wholesalerPrice.push({id: uuid, min: 1, price: 0})
+            this.wholesalerPrice.push({
+                id: uuid(), 
+                wholesaler_qty: 1, 
+                wholesaler_price: 0
+            })
         },
 
         removeItem(index) {

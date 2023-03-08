@@ -60,6 +60,10 @@ export function toThousandFilter(num) {
   return (+num || 0).toString().replace(/^-?\d+/g, m => m.replace(/(?=(?!\b)(\d{3})+$)/g, ','))
 }
 
+export function numberFormat(number) {
+  return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
 /**
  * Upper case first char
  * @param {String} string

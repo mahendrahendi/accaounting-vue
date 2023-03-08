@@ -3,11 +3,23 @@
     <!-- HEADER -->
     <div class="title-container">
       <el-col :span="12">
-        <h1 class="page-title">Items</h1>
+        <div style="display: flex;">
+            <el-button
+            class="button-icon primary"
+            style="margin-right: 20px"
+            icon="el-icon-arrow-left"
+            @click="$router.go(-1)"
+            />
+            <!-- <h1 class="page-title">Tambah Barang</h1> -->
+            <div class="row">
+              <h1 class="page-title">Barang</h1>
+              <h1 class="page-subtitle">{{ supplier_name }}</h1>
+            </div>
+        </div>
       </el-col>
       <el-col :span="12" style="text-align: right;">
         <el-tooltip content="Create Supplier" placement="top">
-          <el-button type="success" round icon="el-icon-plus" @click="$router.push('/item/create')">Item Baru</el-button>
+          <el-button type="success" round icon="el-icon-plus" @click="$router.push({path: '/purchase/supplier/item/create', query: {supplier_id: supplier_id, supplier_name: supplier_name}})">Item Baru</el-button>
         </el-tooltip>
       </el-col>
     </div>
@@ -98,7 +110,7 @@
     <el-table :key="tableKey" v-loading="listLoading" :data="dataList" fit @sort-change="sortChange">
       <el-table-column label="Nama" prop="efc_nrp">
         <template slot-scope="{row}">
-          <span>{{ row.supplier_name }}</span>
+          <span>{{ row.item_name }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="Nama Jabatan" prop="name" sortable="custom">
@@ -108,17 +120,17 @@
       </el-table-column> -->
       <el-table-column label="Deskripsi" prop="efc_email">
         <template slot-scope="{row}">
-          <span>{{ row.supplier_email }}</span>
+          <span>{{ row.item_description }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Harga Beli" prop="efc_username">
         <template slot-scope="{row}">
-          <span>{{ row.supplier_address }}</span>
+          <span>{{ row.item_purchase_price | toThousandFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Harga Jual" prop="efc_phone_number">
         <template slot-scope="{row}">
-          <span>{{ row.supplier_npwp }}</span>
+          <span>{{ row.item_sell_price | toThousandFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Action" align="center" width="150px">
@@ -129,7 +141,7 @@
           </el-tooltip>
           <el-tooltip content="Delete" placement="top">
             <el-button class="table-icon-button danger"
-              @click="handleDelete(row.enforcer_id, row.enforcer_nrp, row.enforcer_username)"><i class="el-icon-delete" />
+              @click="handleDelete(row.item_id, row.item_name, row.item_description)"><i class="el-icon-delete" />
             </el-button>
           </el-tooltip>
         </template>
@@ -146,8 +158,9 @@
 import moment from 'moment'
 import Pagination from '@/components/Pagination'
 import { validNumeric, validPassword, validUsername, validAlphabets } from '@/utils/validate'
+// import { numberFormat } from '@/utils'
 import { MessageBox } from 'element-ui'
-import { getSupplierList } from '@/api/supplier'
+import { getItemListBySuppID, deleteItem } from '@/api/item'
 import { getRoleList } from '@/api/role-management'
 import CryptoJS from 'crypto-js'
 
@@ -167,112 +180,13 @@ export default {
       } else {
         return '-'
       }
-    }
+    },
   },
   data() {
-    const validateAlphabets = (rule, value, callback) => {
-      if (!validAlphabets(value)) {
-        callback(new Error('Only allow alphabets'))
-      } else {
-        callback()
-      }
-    }
-    const validateEmail = (rule, value, callback) => {
-      if (!validUsername(value)) {
-        callback(new Error('Please enter the correct email'))
-      } else {
-        callback()
-      }
-    }
-    const validateNumber = (rule, value, callback) => {
-      if (!validNumeric(value)) {
-        callback(new Error('Mobile number must be numeric'))
-      } else {
-        callback()
-      }
-    }
-    const isSame = (rule, value, callback) => {
-      if (value != this.enforcerListForm.enforcer_password) {
-        callback(
-          new Error(
-            'Confirm password does not match! Make sure your password correct'
-          )
-        )
-      } else {
-        callback()
-      }
-    }
-    const isSameChangePassword = (rule, value, callback) => {
-      if (value != this.changePasswordForm.enforcer_updated_password) {
-        callback(
-          new Error(
-            'Confirm password does not match! Make sure your password correct'
-          )
-        )
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      const result = validPassword(value)
-      if (result == 'complex') {
-        callback(
-          new Error(
-            'Password must be at least 8 characters contains uppercase, lowercase, number, special character (@$!%*?&)'
-          )
-        )
-      } else if (result == 'sequence') {
-        callback(
-          new Error(
-            'Password can not contain sequence and predictable word (abc, 123, password, etc)'
-          )
-        )
-      } else if (result == 'repeat') {
-        callback(
-          new Error('Password can not contain repeated alphabet or number')
-        )
-      } else {
-        if (
-          this.enforcerListForm.adm_usr_first_name &&
-          this.enforcerListForm.adm_usr_last_name &&
-          this.enforcerListForm.adm_usr_email &&
-          this.enforcerListForm.adm_usr_mobile
-        ) {
-          var regexFirstName = new RegExp(
-            '^((?!' + this.enforcerListForm.adm_usr_first_name + ').)*$',
-            'i'
-          )
-          var regexLastName = new RegExp(
-            '^((?!' + this.enforcerListForm.adm_usr_last_name + ').)*$',
-            'i'
-          )
-          var regexEmail = new RegExp(
-            '^((?!' + this.enforcerListForm.adm_usr_email + ').)*$',
-            'i'
-          )
-          var regexMobile = new RegExp(
-            '^((?!' + this.enforcerListForm.adm_usr_mobile + ').)*$',
-            'i'
-          )
-          if (
-            !regexFirstName.test(value) ||
-            !regexLastName.test(value) ||
-            !regexEmail.test(value) ||
-            !regexMobile.test(value)
-          ) {
-            callback(
-              new Error('Password can not contain personal information')
-            )
-          } else {
-            callback()
-          }
-        } else {
-          callback()
-        }
-      }
-    }
 
     return {
+      supplier_id: this.$route.query.supplier_id,
+      supplier_name: this.$route.query.supplier_name,
       // filter date
       dateBetween: { disabledDate: this.disabledOtherDate },
 
@@ -311,61 +225,6 @@ export default {
       dialogChangePassword: false,
       dialogTitle: 'Add Admin',
 
-      // form var
-      enforcerListForm: {
-        edit: false,
-        enforcer_id: undefined,
-        enforcer_email: '',
-        enforcer_jobtitle: '',
-        enforcer_nrp: '',
-        enforcer_phone_number: '',
-        enforcer_status: '',
-        enforcer_satpas: '',
-        enforcer_username: '',
-        enforcer_password: '',
-        confirmPassword: ''
-      },
-
-      changePasswordForm: {
-        enforcer_updated_password: '',
-        confirmPasswordUpdated: '',
-        enforcer_id: ''
-      },
-
-      changePasswordFormRules: {
-        enforcer_updated_password: [{ required: true, trigger: 'blur', validator: validatePassword }],
-        confirmPasswordUpdated: [{ required: true, trigger: 'blur', validator: isSameChangePassword }]
-      },
-
-      userListRules: {
-        role_id: [
-          { required: true, trigger: 'blur', message: 'Please choose a role' }
-        ],
-        adm_usr_email: [
-          { required: true, trigger: 'blur', validator: validateEmail }
-        ],
-        adm_usr_nrp: [
-          { required: true, trigger: 'blur', message: 'Please enter the correct nrp' }
-        ],
-        adm_usr_username: [
-          { required: true, trigger: 'blur', message: 'Please enter the username' }
-        ],
-        adm_usr_job_title: [
-          { required: true, trigger: 'blur', message: 'Please enter the correct job title' }
-        ],
-        adm_usr_mobile: [
-          { required: true, trigger: 'blur', validator: validateNumber }
-        ],
-        enforcer_phone_number: [
-          { required: true, trigger: 'blur', validator: validateNumber }
-        ],
-        usr_pwd_hash: [
-          { required: true, trigger: 'blur', validator: validatePassword }
-        ],
-        confirmPassword: [
-          { required: true, trigger: 'blur', validator: isSame }
-        ]
-      }
     }
   },
   created(){
@@ -381,15 +240,9 @@ export default {
 
     getList() {
       this.listLoading = true
-      if (this.listQuery.page == 1) {
-        this.listQuery.start = 1
-      } else {
-        this.listQuery.start = this.listQuery.pagesize * (this.listQuery.page-1) + 1
-      }
 
-      getSupplierList(this.listQuery).then(response => {
-        this.dataList = response.data.data
-        this.total = response.data.total_records
+      getItemListBySuppID(this.supplier_id).then(response => {
+        this.dataList = response.data
         this.listLoading = false
       }).catch(() => {
         this.listLoading = false
@@ -447,18 +300,15 @@ export default {
 
     // BUTTON ACTION
     handleEdit(row) {
-      this.editList = JSON.parse(JSON.stringify(row))
-      this.enforcerListForm.edit = true
-      this.dialogTitle = 'Edit Enforcer'
-      this.enforcerListForm.enforcer_id = row.enforcer_id
-      this.enforcerListForm.enforcer_email = row.enforcer_email
-      this.enforcerListForm.enforcer_jobtitle = row.enforcer_jobtitle
-      this.enforcerListForm.enforcer_nrp = row.enforcer_nrp
-      this.enforcerListForm.enforcer_phone_number = row.enforcer_phone_number
-      this.enforcerListForm.enforcer_status = row.enforcer_status
-      this.enforcerListForm.enforcer_username = row.enforcer_username
-      this.dialogAddEnforcer = true
-      row.edit = !row.edit
+      this.$router.push({
+        name: 'ItemEdit',
+        query: {
+          supplier_id: this.supplier_id
+        },
+        params: {
+          item_data: row
+        }
+      })
     },
 
     handleAdd() {
@@ -492,8 +342,7 @@ export default {
           this.loadingChange = true
           const tempData = Object.assign({}, this.changePasswordForm)
           // tempData.enforcer_password = this.encrypt(tempData.enforcer_updated_password)
-          tempData.enforcer_password = tempData.enforcer_updated_password
-          console.log('tempData: ', tempData);
+          tempData.enforcer_password = tempData.enforcer_updated_password;
 
           putEnforcerPassword(tempData, tempData.enforcer_id).then(() => {
             this.loadingChange = false
@@ -515,16 +364,16 @@ export default {
       // this.getList()
     },
 
-    handleDelete(enforcer_id, nrp, username) {
-      MessageBox.confirm(`Are you sure you want to delete enforcer ${nrp} (${username}) ? Your action can not be undone.`, 'Delete Confirmation', {
+    handleDelete(item_id, item_name, item_description) {
+      MessageBox.confirm(`Are you sure you want to delete item ${item_name} (${item_description}) ? Your action can not be undone.`, 'Delete Confirmation', {
         confirmButtonText: 'Yes',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        deleteEnforcer(enforcer_id).then((response) => {
+        deleteItem(item_id).then((response) => {
           this.$notify({
             title: 'Success',
-            message: 'Successfully delete enforcer',
+            message: 'Successfully delete item',
             type: 'success',
             duration: 2000
           })
@@ -532,7 +381,7 @@ export default {
         }).catch((err) => {
           this.$notify({
             title: 'Error',
-            message: 'Failed update user',
+            message: 'Failed update item',
             type: 'error',
             duration: 2000
           })
