@@ -53,8 +53,14 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
-                    <el-form-item label="Nomor Pembelian" class="filter-form-item input-small" prop="bill_number">
-                      <el-input ref="bill_number" v-model="billingListForm.bill_number" placeholder="Masukkan Nomor Pembelian" clearable />
+                    <el-form-item label="Nama Bank" class="filter-form-item input-small" prop="bill_bank_name">
+                      <el-select ref="bill_bank_name" v-model="billingListForm.bill_bank_code" placeholder="List Bank" filterable clearable value-key="code">
+                        <el-option v-for="d, index in bankList"
+                                  :key="index"
+                                  :label="d.name"
+                                  :value="d.code"
+                        />
+                      </el-select>
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -65,8 +71,8 @@
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
-                    <el-form-item label="Nomor Pembelian" class="filter-form-item input-small" prop="bill_order_number">
-                      <el-input ref="bill_order_number" v-model="billingListForm.bill_order_number" placeholder="Masukkan No Pembelian" clearable />
+                    <el-form-item label="Nomor Rekening" class="filter-form-item input-small" prop="bill_account_number">
+                      <el-input ref="bill_account_number" v-model="billingListForm.bill_account_number" placeholder="Masukkan No Rekening" clearable />
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -109,6 +115,7 @@
             <el-row v-for="(item, index) in formItemList" :key="item.id">
               <form-item
                 :supplier_id="item.supplier_id"
+                :item_id="item.item_id"
                 :item_name="item.item_name"
                 :item_description="item.item_description"
                 :item_qty="item.item_qty"
@@ -128,11 +135,11 @@
             <div class="counting">
               <el-row type="flex" style="text-align: right;" class="row-bg" justify="end">
                 <el-col :span="6">Subtotal</el-col>
-                <el-col :span="5">{{ itemTotal }}</el-col>
+                <el-col :span="5">Rp{{ itemTotal | toThousandFilter }}</el-col>
               </el-row>
               <el-row type="flex" style="text-align: right;" class="row-bg" justify="end">
                 <el-col :span="6">Ongkos Kirim</el-col>
-                <el-col :span="5">{{ billingListForm.bill_shipping_cost }}</el-col>
+                <el-col :span="5">Rp{{ billingListForm.bill_shipping_cost | toThousandFilter }}</el-col>
               </el-row>
               <!-- <el-row type="flex" align="middle" style="text-align: right;" class="row-bg" justify="end">
                 <el-col :span="6">Diskon %</el-col>
@@ -144,7 +151,7 @@
               </el-row> -->
               <el-row type="flex" style="text-align: right;" class="row-bg" justify="end">
                 <el-col :span="6">Total</el-col>
-                <el-col :span="5">{{ grandTotal }}</el-col>
+                <el-col :span="5">Rp{{ grandTotal | toThousandFilter }}</el-col>
               </el-row>
             </div>
             <el-row>
@@ -186,7 +193,9 @@ import { getRoleList } from '@/api/role-management'
 import { postItem } from '@/api/item'
 import { postBill, getBillById } from '@/api/bill'
 import { getSupplierList, getItemBySuppId } from '@/api/supplier'
+import { getListBank } from '@/api/bank'
 import CryptoJS from 'crypto-js'
+import { toThousandFilter } from '@/filters';
 
 export default {
   components: { FormItem, Dropzone },
@@ -222,6 +231,7 @@ export default {
       supplierList: [],
       itemList: [],
       formItemList: [],
+      bankList: [],
 
       // form var
       billingListForm: {
@@ -239,6 +249,8 @@ export default {
         bill_shipping_cost: 0,
         bill_attachment: '',
         bill_ppn: 0,
+        bill_bank_code: '',
+        bill_account_number: '',
       },
       selectedSupplier: [],
 
@@ -252,7 +264,8 @@ export default {
         this.isSupplierListSelected = true
         this.billingListForm.supplier_id = this.supplierListSelected.supplier_id
         this.getItemList(this.supplierListSelected.supplier_id)
-        // this.inputForm.supplier_id = this.supplierListSelected.supplier_id
+        this.formItemList = []
+        this.billingListForm.bill_items = []
       } else {
         this.isSupplierListSelected = false
       }
@@ -280,6 +293,9 @@ export default {
   created() {
     this.getSupplierList()
     this.getBillById()
+    this.getBankList()
+
+    this.billingListForm.bill_start_date = new Date()
   },
   methods: {
     dropzoneS(file) {
@@ -350,6 +366,10 @@ export default {
       }
     },
 
+    getBankList() {
+      this.bankList = getListBank()
+    },
+
     getItemList(id) {
       getItemBySuppId(id).then(response => {
         // console.log('response.data', response.data);
@@ -396,6 +416,10 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.billingListForm)
           tempData.bill_type = 'vendor'
+          tempData.bill_shipping_cost = parseInt(tempData.bill_shipping_cost)
+          tempData.bill_start_date = moment(tempData.bill_start_date).format('YYYY-MM-DD HH:mm:ss')
+          tempData.bill_due_date = moment(tempData.bill_due_date).format('YYYY-MM-DD HH:mm:ss')
+          tempData.bill_bank_name = tempData.bill_bank_code
 
           // return console.log('tempData', tempData);
 
@@ -426,6 +450,7 @@ export default {
               type: 'success',
               duration: 2000
             })
+            this.$router.go(-1)
             // this.cancelForm()
           }).catch((err) => {
             console.log("err", err);

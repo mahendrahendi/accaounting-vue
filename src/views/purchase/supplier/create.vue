@@ -33,22 +33,25 @@
                   </el-col>
                 </el-row>
                 <el-row>
-                  <el-col :span="16">
+                  <el-col :span="8">
                     <el-form-item label="Email" class="filter-form-item input-small" prop="supplier_email">
                       <el-input v-model="supplierListForm.supplier_email" ref="supplier_email" placeholder="Masukkan Email" clearable @change="handleFilter" />
                     </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
                     <el-form-item label="Telepon" class="filter-form-item input-small" prop="supplier_telephone">
                       <el-input v-model="supplierListForm.supplier_telephone" ref="supplier_telephone" placeholder="Masukkan Telepon" clearable @change="handleFilter" />
                     </el-form-item>
+                  </el-col>
+                  <el-col :span="8">
                     <el-form-item label="Whatsapp" class="filter-form-item input-small" prop="supplier_whatsapp">
                       <el-input v-model="supplierListForm.supplier_whatsapp" ref="supplier_whatsapp" placeholder="Masukkan No Whatsapp" clearable @change="handleFilter" />
                     </el-form-item>
-                    <el-form-item label="Deskripsi" class="filter-form-item input-small" prop="supplier_description">
-                      <el-input v-model="supplierListForm.supplier_description" placeholder="Masukkan Deskripsi" ref="supplier_description" clearable />
-                    </el-form-item>
                   </el-col>
-                  <el-col :span="8">
-
+                  <el-col :span="24">
+                    <el-form-item label="Deskripsi" class="filter-form-item input-small" prop="supplier_description">
+                      <el-input v-model="supplierListForm.supplier_description" placeholder="Masukkan Deskripsi" ref="supplier_description" type="textarea" :rows="5" clearable />
+                    </el-form-item>
                   </el-col>
                 </el-row>
               </div>
@@ -68,14 +71,14 @@
                       <el-input v-model="supplierListForm.supplier_npwp" ref="supplier_npwp" placeholder="Masukkan NPWP" clearable />
                     </el-form-item>
                   </el-col>
-                  <el-col :span="12">
+                  <!-- <el-col :span="12">
                     <el-form-item label="Mata Uang" class="filter-form-item input-small" prop="supplier_currency">
                       <el-select v-model="supplierListForm.supplier_currency" placeholder="Status" clearable >
                         <el-option v-for="item, index in currency" :key="index" :label="item"
                           :value="item" />
                       </el-select>
                     </el-form-item>
-                  </el-col>
+                  </el-col> -->
                 </el-row>
               </div>
               <div class="summary-container">
@@ -89,16 +92,9 @@
               </div>
               <div class="data-container">
                 <el-row>
-                  <el-col :span="12">
-                    <el-form-item label="Penemu Alamat" class="filter-form-item input-small" prop="supplier_founder_address">
-                      <el-input v-model="supplierListForm.supplier_founder_address" ref="supplier_founder_address" placeholder="Masukkan Penemu Alamat" clearable />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
                   <el-col>
                     <el-form-item label="Alamat" class="filter-form-item input-small" prop="supplier_address">
-                      <el-input ref="supplier_address" v-model="supplierListForm.supplier_address" placeholder="Masukkan Alamat" clearable @change="handleFilter" type="textarea" :rows="5" />
+                      <el-input ref="supplier_address" v-model="supplierListForm.supplier_address" placeholder="Masukkan Alamat" clearable @change="handleFilter" />
                     </el-form-item>
                   </el-col>
                 </el-row>

@@ -13,17 +13,13 @@
     </div>
 
     <div class="title-container" align="center">
-      <el-col :span="8">
+      <el-col :span="12">
         <h1 class="page-title">Rp{{ billHeader.bill_overdue | toThousandFilter }}</h1>
         <h1 class="page-subtitle">Jatuh Tempo</h1>
       </el-col>
-      <el-col :span="8">
-        <h1 class="page-title">Rp{{ billHeader.bill_open | toThousandFilter }}</h1>
-        <h1 class="page-subtitle">Terbuka</h1>
-      </el-col>
-      <el-col :span="8">
+      <el-col :span="12">
         <h1 class="page-title">Rp{{ billHeader.bill_draft | toThousandFilter }}</h1>
-        <h1 class="page-subtitle">Konsep</h1>
+        <h1 class="page-subtitle">Menunggu Pembayaran</h1>
       </el-col>
     </div>
 
@@ -106,14 +102,18 @@
       </el-table-column>
       <el-table-column label="Jumlah" prop="efc_phone_number">
         <template slot-scope="{row}">
-          <span>{{ row.bill_discount }}</span>
+          <span>Rp{{ row.bill_total | toThousandFilter }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Action" align="center" width="150px">
         <template slot-scope="{row}">
-          <el-tooltip content="Edit" placement="top">
+          <!-- <el-tooltip content="Edit" placement="top">
             <el-button class="table-icon-button primary" @click="$router.push({ path: '/purchase/bills/edit', query: { id: row.bill_id, title: 'Edit Pembelian' } })"><i
                 class="el-icon-edit" /></el-button>
+          </el-tooltip> -->
+          <el-tooltip content="Change Status Bayar" placement="top">
+            <el-button class="table-icon-button primary" @click="handlePaymentStatus(row.bill_id, row.supplier_name, row.bill_status)"><i
+                class="el-icon-money" /></el-button>
           </el-tooltip>
           <el-tooltip content="Change Password" placement="top">
             <el-button class="table-icon-button warning" @click="handleChangePassword(row.enforcer_id)"><i
@@ -121,7 +121,7 @@
           </el-tooltip>
           <el-tooltip content="Delete" placement="top">
             <el-button class="table-icon-button danger"
-              @click="handleDelete(row.enforcer_id, row.enforcer_nrp, row.enforcer_username)"><i class="el-icon-delete" />
+              @click="handleDelete(row.bill_id, row.supplier_name, row.bill_status)"><i class="el-icon-delete" />
             </el-button>
           </el-tooltip>
         </template>
@@ -140,7 +140,7 @@ import Pagination from '@/components/Pagination'
 import { validNumeric, validPassword, validUsername, validAlphabets } from '@/utils/validate'
 import { MessageBox } from 'element-ui'
 import { getEnforcerList, postEnforcer, putEnforcer, putEnforcerPassword, deleteEnforcer } from '@/api/enforcer-account'
-import { getBillList, getBillHeader } from '@/api/bill'
+import { getBillList, getBillHeader, changeBillStatus, deleteBill } from '@/api/bill'
 import { getRoleList } from '@/api/role-management'
 import CryptoJS from 'crypto-js'
 
@@ -155,7 +155,7 @@ export default {
       listQuery: {
         page: 1,
         pagesize: 10,
-        order: '',
+        order: 'bill_id desc',
         start: 1,
         name: '',
         email: '',
@@ -214,16 +214,16 @@ export default {
       })
     },
 
-    handleDelete(enforcer_id, nrp, username) {
-      MessageBox.confirm(`Are you sure you want to delete enforcer ${nrp} (${username}) ? Your action can not be undone.`, 'Delete Confirmation', {
+    handleDelete(id, name, status) {
+      MessageBox.confirm(`Are you sure you want to Delete Pembelian ${name} (${status}) ? Your action can not be undone.`, 'Delete Confirmation', {
         confirmButtonText: 'Yes',
         cancelButtonText: 'Cancel',
         type: 'warning'
       }).then(() => {
-        deleteEnforcer(enforcer_id).then((response) => {
+        deleteBill(id).then((response) => {
           this.$notify({
             title: 'Success',
-            message: 'Successfully delete enforcer',
+            message: 'Successfully delete pembelian',
             type: 'success',
             duration: 2000
           })
@@ -231,7 +231,33 @@ export default {
         }).catch((err) => {
           this.$notify({
             title: 'Error',
-            message: 'Failed update user',
+            message: 'Failed delete pembelian',
+            type: 'error',
+            duration: 2000
+          })
+        })
+      }).catch(() => { })
+    },
+
+    handlePaymentStatus(id, name, status) {
+      MessageBox.confirm(`Are you sure you want to Change Payment Status ${name} - (${status}) ? Your action can not be undone.`, 'Delete Confirmation', {
+        confirmButtonText: 'Yes',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(() => {
+        changeBillStatus(id, "paid").then((response) => {
+          this.$notify({
+            title: 'Success',
+            message: 'Successfully change payment status',
+            type: 'success',
+            duration: 2000
+          })
+          this.getList()
+          this.getHeader()
+        }).catch((err) => {
+          this.$notify({
+            title: 'Error',
+            message: 'Failed change payment status',
             type: 'error',
             duration: 2000
           })

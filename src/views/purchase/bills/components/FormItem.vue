@@ -65,7 +65,7 @@
         </el-form-item>
       </el-col>
       <el-col :span="2">
-        <p class="item-total">{{ list.item_total_price }}</p>
+        <p class="item-total">Rp{{ list.item_total_price | toThousandFilter }}</p>
       </el-col>
       <el-col :span="2">
         <p class="item-total">
@@ -76,12 +76,16 @@
     </el-row>
   </template>
   
-  <script>
+<script>
   import { getItemBySuppId } from '@/api/supplier'
+  import { toThousandFilter } from '@/filters'
 
   export default {
     name: 'FormItem',
     props: {
+      item_id: {
+        type: Number
+      },
       item_name: {
         type: String,
         default: ''
@@ -119,6 +123,9 @@
         type: Number,
         default: 0
       },
+      item_unit: {
+        type: String,
+      },
       isItemSelected: {
         type: Boolean,
         default: false
@@ -131,6 +138,7 @@
         itemList: [],
         isItemListSelected: this.isItemSelected,
         list: {
+          item_id: this.id,
           item_name: this.item_name,
           item_description: this.item_description,
           item_qty: this.item_qty,
@@ -139,7 +147,7 @@
           item_purchase_price: this.item_purchase_price,
           item_total_price: 0,
           item_status: '',
-          item_unit: ''
+          item_unit: this.item_unit
         },
         itemListSelectedTemp: '',
         isDisabled: false
@@ -149,9 +157,11 @@
       // whenever supplierListSelected question changes, this function will run
       itemListSelectedTemp() {
         if (this.itemListSelectedTemp != '') {
+          this.list.item_id = this.itemListSelectedTemp.item_id
           this.list.item_name = this.itemListSelectedTemp.item_name
           this.list.item_description = this.itemListSelectedTemp.item_description
           this.list.item_qty = 1
+          this.list.item_unit = this.itemListSelectedTemp.item_unit
           this.list.item_purchase_price = this.itemListSelectedTemp.item_purchase_price
           this.list.item_discount = this.itemListSelectedTemp.item_discount ? this.itemListSelectedTemp.item_discount : 0
           this.list.item_ppn = this.itemListSelectedTemp.item_ppn ? this.itemListSelectedTemp.item_ppn : 0
@@ -168,7 +178,6 @@
         }
       },
       supplier_id() {
-        console.log('this.supplier_id: ', this.supplier_id);
         if (this.supplier_id != 0) {
           this.getItemList(this.supplier_id)
         }
@@ -177,19 +186,9 @@
     created() {
       this.getItemList(this.supplier_id)
     },
-    computed: {
-      // totalPrice(qty, item_purchase_price, item_discount, item_ppn) {
-      //   let count_qty = parseInt(item_purchase_price) * qty
-      //   let count_discount = count_qty - (count_qty * (parseInt(item_discount) / 100))
-      //   let total = count_discount + (count_discount * (parseInt(item_ppn) / 100))
-      //   return total
-      // },
-    },
     methods: {
       getItemList(id) {
         getItemBySuppId(id).then(response => {
-          console.log('itemList', this.itemList);
-          console.log('response.data', response.data);
           this.itemList = response.data
         }).catch(() => {})
       },
@@ -204,15 +203,14 @@
         this.itemList.splice(index, 1)
       },
       emitInput() {
+        let disc = this.list.item_discount != '' ? parseInt(this.list.item_discount) : 0
         let count_qty = parseInt(this.list.item_purchase_price) * this.list.item_qty
-        let count_discount = count_qty - (count_qty * (parseInt(this.list.item_discount) / 100))
+        let count_discount = count_qty - (count_qty * (disc / 100))
         let count_ppn = count_discount + (count_discount * (parseInt(this.list.item_ppn) / 100))
         let total = count_ppn
-        console.log('total: ', this.list.item_ppn);
-        // const total = parseInt(this.list.item_qty) * parseInt(this.list.item_purchase_price)
-        // let total = totalPrice(this.list.item_qty, this.list.item_purchase_price, this.list.item_discount, this.list.item_ppn)
         this.list.item_total_price = total || 0
         this.$emit('input', {
+          item_id: this.list.item_id,
           item_key: this.item_key,
           item_name: this.list.item_name,
           item_description: this.list.item_description,

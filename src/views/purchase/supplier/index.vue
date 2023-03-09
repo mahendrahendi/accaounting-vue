@@ -106,7 +106,7 @@
           <span>{{ row.adm_usr_first_name }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="Email / Telepon" prop="efc_email">
+      <el-table-column label="Email" prop="efc_email">
         <template slot-scope="{row}">
           <span>{{ row.supplier_email }}</span>
         </template>
@@ -116,7 +116,7 @@
           <span>{{ row.supplier_address }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Open / Jatuh Tempo" prop="efc_phone_number">
+      <el-table-column label="WhatsApp No." prop="efc_phone_number">
         <template slot-scope="{row}">
           <span>{{ row.supplier_npwp }}</span>
         </template>

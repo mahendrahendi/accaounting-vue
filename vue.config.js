@@ -37,7 +37,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    host: 'localhost'
+    host: '0.0.0.0'
     // before: require('./mock/mock-server.js')
   },
   configureWebpack: {
