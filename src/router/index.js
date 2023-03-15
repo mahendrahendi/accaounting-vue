@@ -162,6 +162,7 @@ export const asyncRoutes = [
       roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR']
     },
     children: [
+      // bills
       {
         path: 'bills/list',
         component: () => import('@/views/purchase/bills'),
@@ -185,6 +186,47 @@ export const asyncRoutes = [
         hidden: true,
         meta: { title: 'Edit Pembelian', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/bills/list' },
       },
+      // operational
+      {
+        path: 'operational/list',
+        component: () => import('@/views/purchase/operational'),
+        name: 'OperationalList',
+        props: true,
+        meta: { title: 'Operasional', icon: 'form', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'] }
+      },
+      {
+        path: 'operational/create',
+        component: () => import('@/views/purchase/operational/create'),
+        name: 'CreateOperational',
+        props: true,
+        hidden: true,
+        meta: { title: 'Create Operasional', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/operational/list' },
+      },
+      {
+        path: 'operational/create-saldo',
+        component: () => import('@/views/purchase/operational/create_saldo'),
+        name: 'CreateSaldo',
+        props: true,
+        hidden: true,
+        meta: { title: 'Create Saldo', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/operational/list' },
+      },
+      {
+        path: 'operational/history-saldo',
+        component: () => import('@/views/purchase/operational/history_saldo'),
+        name: 'HistorySaldo',
+        props: true,
+        hidden: true,
+        meta: { title: 'History Saldo', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/operational/list' },
+      },
+      {
+        path: 'operational/edit',
+        component: () => import('@/views/purchase/operational/create'),
+        name: 'EditOperational',
+        props: true,
+        hidden: true,
+        meta: { title: 'Edit Operasional', affix: true, roles: ['SUPERADMIN', 'ADMINISTRATOR', 'OPERATOR'],  activeMenu: '/purchase/operational/list' },
+      },
+      // supplier
       {
         path: 'supplier/list',
         component: () => import('@/views/purchase/supplier'),

@@ -128,7 +128,7 @@
               </div>
               <el-row style="text-align: right; margin-top: 25px; padding-bottom: 50px">
                 <el-button @click="$router.go(-1)" type="info" round>Cancel</el-button>
-                <el-button style="margin-right: 25px" type="success" round @click="createSupplier">Submit</el-button>
+                <el-button style="margin-right: 25px" type="success" round @click="createSupplier">Simpan</el-button>
               </el-row>
             </el-form>
         </el-col>

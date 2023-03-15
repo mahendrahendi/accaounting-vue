@@ -69,7 +69,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="button-custom small info" @click="dialogChangePassword = false">Cancel</el-button>
-        <el-button class="button-custom small success">Submit</el-button>
+        <el-button class="button-custom small success">Simpan</el-button>
       </div>
     </el-dialog>
   </div>

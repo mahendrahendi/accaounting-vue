@@ -118,13 +118,13 @@
       </el-table-column>
       <el-table-column label="WhatsApp No." prop="efc_phone_number">
         <template slot-scope="{row}">
-          <span>{{ row.supplier_npwp }}</span>
+          <span>{{ row.supplier_whatsapp }}</span>
         </template>
       </el-table-column>
       <el-table-column label="Barang" align="center" prop="efc_phone_number">
         <template slot-scope="{row}">
           <span><el-tooltip content="Edit" placement="top">
-            <el-button type="warning" round @click="$router.push({ path: '/purchase/supplier/item/list', query: { supplier_id: row.supplier_id, supplier_name: row.supplier_name } })">Lihat Barang..</el-button>
+            <el-button type="info" round @click="$router.push({ path: '/purchase/supplier/item/list', query: { supplier_id: row.supplier_id, supplier_name: row.supplier_name } })"><i class="el-icon-box" /></el-button>
           </el-tooltip></span>
         </template>
       </el-table-column>

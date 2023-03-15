@@ -3,23 +3,22 @@
     <!-- HEADER -->
     <div class="title-container">
       <el-col :span="12">
-        <h1 class="page-title">Pembelian</h1>
+        <h1 class="page-title">Operasional</h1>
       </el-col>
       <el-col :span="12" style="text-align: right;">
+        <el-tooltip content="Saldo" placement="top">
+          <el-button type="primary" round icon="el-icon-plus" @click="$router.push({path: '/purchase/operational/create-saldo', query: { title: 'Create Saldo' }})">Saldo</el-button>
+        </el-tooltip>
         <el-tooltip content="Create Pembelian Baru" placement="top">
-          <el-button type="success" round icon="el-icon-plus" @click="$router.push({path: '/purchase/bills/create', query: { title: 'Create Pembelian' }})">Pembelian Baru</el-button>
+          <el-button type="success" round icon="el-icon-plus" @click="$router.push({path: '/purchase/operational/create', query: { title: 'Create Pembelian' }})">Pembelian Baru</el-button>
         </el-tooltip>
       </el-col>
     </div>
 
     <div class="title-container" align="center">
-      <el-col :span="12">
-        <h1 class="page-title">Rp{{ billHeader.bill_overdue | toThousandFilter }}</h1>
-        <h1 class="page-subtitle">Jatuh Tempo</h1>
-      </el-col>
-      <el-col :span="12">
+      <el-col :span="24">
         <h1 class="page-title">Rp{{ billHeader.bill_draft | toThousandFilter }}</h1>
-        <h1 class="page-subtitle">Menunggu Pembayaran</h1>
+        <h1 class="page-subtitle">Saldo</h1>
       </el-col>
     </div>
 
@@ -59,17 +58,17 @@
     <el-dialog title="Filter" :visible.sync="dialogFilter" class="dialog-small">
       <el-form>
         <el-form-item>
-          <el-select v-model="listQuery.status" placeholder="Status" clearable @change="handleFilter">
+          <el-select v-model="listQuery.status" placeholder="Type" clearable @change="handleFilter">
             <el-option v-for="item, index in statusList" :key="index" :label="item"
               :value="item" />
           </el-select>
         </el-form-item>
-        <!-- <el-form-item>
-          <el-select v-model="listQuery.supplierType" placeholder="Type" clearable @change="handleFilter">
-            <el-option v-for="item, index in supplierType" :key="index" :label="item"
-              :value="item" />
-          </el-select>
-        </el-form-item> -->
+        <el-form-item>
+            <el-select v-model="listQuery.supplierType" placeholder="Type" clearable @change="handleFilter">
+              <el-option v-for="item, index in supplierType" :key="index" :label="item"
+                :value="item" />
+            </el-select>
+          </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="button-custom small primary" @click="handleFilter">Search</el-button>

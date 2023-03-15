@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-row>
-      <el-col :span="24">
+      <el-col :span="18">
         <!-- HEADER -->
         <div class="title-container">
           <div style="display: flex;">
@@ -14,19 +14,22 @@
             <h1 class="page-title">{{ title }}</h1>
           </div>
         </div>
+        <el-tooltip content="Riwayat Saldo" placement="top">
+          <el-button type="warning" round icon="el-icon-finished" @click="$router.push({path: '/purchase/operational/history-saldo', query: { title: 'History Saldo' }})">Riwayat</el-button>
+        </el-tooltip>
         <el-form ref="billingListForm" :model="billingListForm" :rules="billRules">
           <div class="summary-container">
             <div class="row">
-              <h4 class="summary-form summary-title">Billing</h4>
+              <h4 class="summary-form summary-title">Umum</h4>
               <p class="subtitle">
-                Detail penagihan muncul di pembelian Anda. Tanggal pembelian digunakan di dasbor dan laporan. Pilih tanggal yang Anda harapkan untuk membayar sebagai Tanggal Jatuh Tempo.
+                Transfer uang antar akun dengan mata uang yang berbeda dan patok mata uang ke nilai tukar mana pun yang Anda inginkan.
               </p>
               <hr>
             </div>
           </div>
           <div class="data-container">
             <el-row>
-              <el-col :span="10">
+              <!-- <el-col :span="24">
                 <el-form-item label="Supplier" class="filter-form-item input-small" prop="supplier_id">
                   <el-select ref="supplier_id" v-model="supplierListSelected" placeholder="List Supplier" filterable clearable value-key="supplier_id">
                     <el-option v-for="item, index in supplierList"
@@ -44,116 +47,22 @@
                     <p>{{ supplierListSelected.supplier_email }}</p>
                   </div>
                 </el-form-item>
-              </el-col>
-              <el-col :span="14">
+              </el-col> -->
+              <el-col :span="24">
                 <el-row>
                   <el-col :span="12">
-                    <el-form-item label="Tanggal Pembelian" class="filter-form-item input-small" prop="bill_start_date">
+                    <el-form-item label="Tanggal" class="filter-form-item input-small" prop="bill_start_date">
                       <el-date-picker ref="bill_start_date" v-model="billingListForm.bill_start_date" value-format="yyyy-MM-dd" placeholder="YYYY-MM-DD" type="date" clearable />
                     </el-form-item>
                   </el-col>
                   <el-col :span="12">
-                    <el-form-item label="Nama Bank" class="filter-form-item input-small" prop="bill_bank_name">
-                      <el-select ref="bill_bank_name" v-model="billingListForm.bill_bank_code" placeholder="List Bank" filterable clearable value-key="code">
-                        <el-option v-for="d, index in bankList"
-                                  :key="index"
-                                  :label="d.name"
-                                  :value="d.code"
-                        />
-                      </el-select>
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="12">
-                    <el-form-item label="Tanggal Jatuh Tempo" class="filter-form-item input-small" prop="bill_due_date">
-                      <el-date-picker ref="bill_due_date" v-model="billingListForm.bill_due_date" value-format="yyyy-MM-dd" placeholder="YYYY-MM-DD" type="date" clearable />
-                    </el-form-item>
-                  </el-col>
-                  <el-col :span="12">
-                    <el-form-item label="Nomor Rekening" class="filter-form-item input-small" prop="bill_account_number">
-                      <el-input ref="bill_account_number" v-model="billingListForm.bill_account_number" placeholder="Masukkan No Rekening" clearable />
-                    </el-form-item>
-                  </el-col>
-                </el-row>
-                <el-row>
-                  <el-col :span="12">
-                    <el-form-item label="Ongkos Kirim" class="filter-form-item input-small" prop="bill_shipping_cost">
-                      <el-input ref="bill_shipping_cost" v-model="billingListForm.bill_shipping_cost" placeholder="Masukkan Ongkos Kirim" clearable />
+                    <el-form-item label="Jumlah" class="filter-form-item input-small" prop="bill_account_number">
+                      <el-input ref="bill_account_number" v-model="billingListForm.bill_account_number" clearable placeholder="Masukkan Jumlah"></el-input>
                     </el-form-item>
                   </el-col>
                 </el-row>
               </el-col>
             </el-row>
-            <el-row style="margin-top: 30px; font-size: 14px;">
-              <el-col :span="4">
-                <span>Barang</span>
-              </el-col>
-              <el-col :span="5">
-                <span>Deskripsi</span>
-              </el-col>
-              <el-col :span="2">
-                <span>Satuan</span>
-              </el-col>
-              <el-col :span="2">
-                <span>Kuantitas</span>
-              </el-col>
-              <el-col :span="3">
-                <span>Harga Satuan</span>
-              </el-col>
-              <el-col :span="2">
-                <span>Diskon</span>
-              </el-col>
-              <el-col :span="2">
-                <span>PPN</span>
-              </el-col>
-              <el-col :span="2" style="text-align: right;">
-                <span>Jumlah</span>
-              </el-col>
-            </el-row>
-            <hr>
-            <el-row v-for="(item, index) in formItemList" :key="item.id">
-              <form-item
-                :supplier_id="item.supplier_id"
-                :item_id="item.item_id"
-                :item_name="item.item_name"
-                :item_description="item.item_description"
-                :item_qty="item.item_qty"
-                :item_price="item.item_price"
-                :item_total="item.item_total"
-                :item_purchase_price = "item.item_purchase_price"
-                :isItemSelected="item.isItemSelected"
-                :index="index"
-                :item_key="item.id"
-                @remove-item="removeItem(index)"
-                @input="handleInput"
-              />
-            </el-row>
-            <el-row style="margin-top: 25px; padding-bottom: 50px">
-              <el-button style="width: 100%" @click="addMoreItem">Add more..</el-button>
-            </el-row>
-            <div class="counting">
-              <el-row type="flex" style="text-align: right;" class="row-bg" justify="end">
-                <el-col :span="6">Subtotal</el-col>
-                <el-col :span="5">Rp{{ itemTotal | toThousandFilter }}</el-col>
-              </el-row>
-              <el-row type="flex" style="text-align: right;" class="row-bg" justify="end">
-                <el-col :span="6">Ongkos Kirim</el-col>
-                <el-col :span="5">Rp{{ billingListForm.bill_shipping_cost | toThousandFilter }}</el-col>
-              </el-row>
-              <!-- <el-row type="flex" align="middle" style="text-align: right;" class="row-bg" justify="end">
-                <el-col :span="6">Diskon %</el-col>
-                <el-col :span="5">
-                  <el-form-item class="input-small-right" prop="bill_discount">
-                    <el-input ref="bill_discount" v-model="billingListForm.bill_discount" placeholder="Masukkan Diskon" />
-                  </el-form-item>
-                </el-col>
-              </el-row> -->
-              <el-row type="flex" style="text-align: right;" class="row-bg" justify="end">
-                <el-col :span="6">Total</el-col>
-                <el-col :span="5">Rp{{ grandTotal | toThousandFilter }}</el-col>
-              </el-row>
-            </div>
             <el-row>
               <el-col :span="24">
                 <el-form-item label="Catatan" class="input-small" prop="bill_notes">
@@ -162,7 +71,7 @@
               </el-col>
             </el-row>
             <el-row style="margin-top: 30px;">
-              <el-col :span="12">
+              <el-col :span="24">
                 <span style="font-size: 14px;">Lampiran</span>
                 <div class="editor-container">
                   <dropzone id="myVueDropzone" url="https://httpbin.org/post" @dropzone-removedFile="dropzoneR" @dropzone-success="dropzoneS" />
@@ -176,12 +85,20 @@
           </el-row>
         </el-form>
       </el-col>
+      <el-col :span="6">
+            <img src="@/assets/bank-feeds.png" alt="" style="position: absolute">
+            <div class="row" style="text-align: right;">
+                <h4 class="filter-title">Connect Your Bank</h4>
+                <h6>Import transactions securely to automate your bookkeeping and reports by connecting your bank accounts.</h6>
+            </div>
+        </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
+import MaskedInput from 'vue-masked-input'
 import { v4 as uuid } from 'uuid';
 import FormItem from './components/FormItem.vue'
 import Dropzone from '@/components/Dropzone'
@@ -198,7 +115,7 @@ import CryptoJS from 'crypto-js'
 import { toThousandFilter } from '@/filters';
 
 export default {
-  components: { FormItem, Dropzone },
+  components: { FormItem, Dropzone, MaskedInput },
   data() {
     return {
       title: this.$route.query.title,

@@ -263,8 +263,8 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="button-custom small info" @click="dialogAddAdmin = false">Cancel</el-button>
-        <el-button v-if="userListForm.edit" class="button-custom small success" @click="updateUser">Submit</el-button>
-        <el-button v-else class="button-custom small success" @click="createUser">Submit</el-button>
+        <el-button v-if="userListForm.edit" class="button-custom small success" @click="updateUser">Simpan</el-button>
+        <el-button v-else class="button-custom small success" @click="createUser">Simpan</el-button>
       </div>
     </el-dialog>
 
@@ -291,7 +291,7 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button class="button-custom small info" @click="dialogChangePassword = false">Cancel</el-button>
-        <el-button class="button-custom small success" @click="changePassword">Submit</el-button>
+        <el-button class="button-custom small success" @click="changePassword">Simpan</el-button>
       </div>
     </el-dialog>
 

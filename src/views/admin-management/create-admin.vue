@@ -4,7 +4,7 @@
     <div class="title-container">
       <h1 class="page-title">Create User</h1>
       <div class="page-button">
-        <el-button class="button-custom primary" @click="submit">Submit</el-button>
+        <el-button class="button-custom primary" @click="submit">Simpan</el-button>
         <el-button class="button-custom secondary" @click="$router.go(-1)">Back</el-button>
       </div>
     </div>
@@ -126,7 +126,7 @@
       </el-col>
     </el-row>
     <div class="page-button-media bottom">
-      <el-button class="button-custom primary" @click="submit">Submit</el-button>
+      <el-button class="button-custom primary" @click="submit">Simpan</el-button>
     </div>
   </div>
 </template>

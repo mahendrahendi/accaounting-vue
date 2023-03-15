@@ -87,3 +87,17 @@ export function dateTimeFilter(date) {
     return '-'
   }
 }
+
+export const moneyMask = (value) => {
+  console.log('value: ', value);
+  value = value.replace('.', '').replace(',', '').replace(/\D/g, '')
+
+  const options = { minimumFractionDigits: 2 }
+  const result = new Intl.NumberFormat('pt-BR', options).format(
+    parseFloat(value) / 100
+  )
+
+  console.log(result)
+
+  return result
+}
