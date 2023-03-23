@@ -23,126 +23,32 @@
       </el-col>
     </div>
 
-    <!-- BUTTON FOR SMALL MEDIA -->
-    <div class="page-button-media">
-      <el-tooltip content="Filter" placement="top">
-        <el-button class="button-icon primary" @click="dialogFilter = true"><i class="fa-solid fa-filter" /></el-button>
-      </el-tooltip>
-    </div>
-
-    <!-- FILTER -->
-    <div class="filter-container">
-      <h4 class="filter-form filter-title">Filter</h4>
-    </div>
-    <div class="filter-container">
-      <el-form class="filter-form" style="margin-bottom: 10px">
-        <el-col :span="8">
-          <el-form-item class="filter-form-item input-small">
-            <el-select v-model="listQuery.status" placeholder="Status" clearable @change="handleFilter">
-              <el-option v-for="item, index in statusList" :key="index" :label="item"
-                :value="item" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <!-- <el-col :span="5">
-          <el-form-item class="filter-form-item input-small">
-            <el-select v-model="listQuery.supplierType" placeholder="Type" clearable @change="handleFilter">
-              <el-option v-for="item, index in supplierType" :key="index" :label="item"
-                :value="item" />
-            </el-select>
-          </el-form-item>
-        </el-col> -->
-      </el-form>
-    </div>
-
-    <!-- FILTER DIALOG FOR SMALL MEDIA -->
-    <el-dialog title="Filter" :visible.sync="dialogFilter" class="dialog-small">
-      <el-form>
-        <el-form-item>
-          <el-select v-model="listQuery.status" placeholder="Status" clearable @change="handleFilter">
-            <el-option v-for="item, index in statusList" :key="index" :label="item"
-              :value="item" />
-          </el-select>
-        </el-form-item>
-        <!-- <el-form-item>
-          <el-select v-model="listQuery.supplierType" placeholder="Type" clearable @change="handleFilter">
-            <el-option v-for="item, index in supplierType" :key="index" :label="item"
-              :value="item" />
-          </el-select>
-        </el-form-item> -->
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button class="button-custom small primary" @click="handleFilter">Search</el-button>
-      </div>
-    </el-dialog>
-
-    <!-- TABLE -->
-    <el-table :key="tableKey" v-loading="listLoading" :data="dataList" fit @sort-change="sortChange">
-      <el-table-column prop="efc_nrp">
-        <template slot="header" >
-          <div class="table-header">
-            <span>Tanggal Jatuh Tempo</span><br>
-            <span style="font-weight: normal">Tanggal Pembelian</span>
-          </div>
-        </template>
-        <template slot-scope="{row}">
-          <span><b>{{ row.bill_due_date | dateFilter }}</b></span><br>
-          <span>{{ row.bill_start_date | dateFilter }}</span>
-        </template>
-      </el-table-column>
-      <!-- <el-table-column label="Nama Jabatan" prop="name" sortable="custom">
-        <template slot-scope="{row}">
-          <span>{{ row.adm_usr_first_name }}</span>
-        </template>
-      </el-table-column> -->
-      <el-table-column label="Status" prop="efc_email">
-        <template slot-scope="{row}">
-          <el-tag :type="row.bill_status | statusFilter">{{ row.bill_status }}</el-tag>
-        </template>
-      </el-table-column>
-      <el-table-column prop="efc_username">
-        <template slot="header" >
-          <div class="table-header">
-            <span>Supplier</span><br>
-            <span style="font-weight: normal">Nomor</span>
-          </div>
-        </template>
-        <template slot-scope="{row}">
-          <span><b>{{ row.supplier_name }}</b></span><br>
-          <span>{{ row.bill_number }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Jumlah" prop="efc_phone_number">
-        <template slot-scope="{row}">
-          <span>Rp{{ row.bill_total | toThousandFilter }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="Action" align="center" width="150px">
-        <template slot-scope="{row}">
-          <!-- <el-tooltip content="Edit" placement="top">
-            <el-button class="table-icon-button primary" @click="$router.push({ path: '/purchase/bills/edit', query: { id: row.bill_id, title: 'Edit Pembelian' } })"><i
-                class="el-icon-edit" /></el-button>
-          </el-tooltip> -->
-          <el-tooltip content="Change Status Bayar" placement="top" v-show="row.bill_status != 'SUDAH DIBAYAR'">
-            <el-button class="table-icon-button primary" @click="handlePaymentStatus(row.bill_id, row.supplier_name, row.bill_status)"><i
-                class="el-icon-money" /></el-button>
-          </el-tooltip>
-          <!-- <el-tooltip content="Change Password" placement="top">
-            <el-button class="table-icon-button warning" @click="handleChangePassword(row.enforcer_id)"><i
-                class="el-icon-view" /></el-button>
-          </el-tooltip> -->
-          <el-tooltip content="Delete" placement="top">
-            <el-button class="table-icon-button danger"
-              @click="handleDelete(row.bill_id, row.supplier_name, row.bill_status)"><i class="el-icon-delete" />
-            </el-button>
-          </el-tooltip>
-        </template>
-      </el-table-column>
-    </el-table>
-
-    <!-- Pagination -->
-    <pagination v-show="total > 0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.pagesize"
-      @pagination="getList" />
+    <el-tabs v-model="activeTab">
+      <el-tab-pane
+        key="bills"
+        label="Bills"
+        name="bills"
+      >
+        <keep-alive>
+          <bills-type-pane 
+            v-if="activeTab === 'bills'"
+            :key="number_of_change"
+          />
+        </keep-alive>
+      </el-tab-pane>
+      <el-tab-pane
+        key="recurring"
+        label="Recurring Templates"
+        name="recurring"
+      >
+        <keep-alive>
+          <recurring-type-pane 
+            v-if="activeTab === 'recurring'"
+            :key="number_of_change"
+          />
+        </keep-alive>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 
@@ -155,12 +61,17 @@ import { getEnforcerList, postEnforcer, putEnforcer, putEnforcerPassword, delete
 import { getBillList, getBillHeader, changeBillStatus, deleteBill } from '@/api/bill'
 import { getRoleList } from '@/api/role-management'
 import CryptoJS from 'crypto-js'
+import BillsTabPane from './components/TabPane/BillsTabPane.vue'
+import RecurringTabPane from './components/TabPane/RecurringTabPane.vue'
 
 export default {
-  components: { Pagination },
+  components: { 
+    Pagination, 
+    'bills-type-pane': BillsTabPane, 
+    'recurring-type-pane': RecurringTabPane 
+  },
   filters: {
     statusFilter(status) {
-      console.log('status: ', status);
       const statusMap = {
         'SUDAH DIBAYAR': 'success',
         'MENUNGGU PEMBAYARAN': 'warning',
@@ -172,6 +83,7 @@ export default {
     return {
       // filter date
       dateBetween: { disabledDate: this.disabledOtherDate },
+      activeTab: 'bills',
 
       // query var
       listQuery: {
@@ -199,6 +111,7 @@ export default {
 
       // dialog var
       dialogFilter: false,
+      number_of_change: 0
     }
   },
   created(){
